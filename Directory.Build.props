@@ -1,0 +1,17 @@
+<Project>
+  <Import Project="build\Version.props" />
+  <PropertyGroup>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)</PackageOutputPath>
+    <Authors>dotnet-campus</Authors>
+    <Company>dotnet-campus</Company>
+    <LangVersion>latest</LangVersion>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>多线程异步工具</Description>
+    <Copyright>Copyright (c) 2020 dotnet-campus</Copyright>
+    <PackageProjectUrl>https://github.com/dotnet-campus/AsyncWorkerCollection</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dotnet-campus/AsyncWorkerCollection.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>dotnet;yaml;</PackageTags>
+  </PropertyGroup>
+</Project>
