@@ -28,7 +28,7 @@ namespace dotnetCampus.Threading
         /// <typeparam name="T">返回结果类型</typeparam>
         /// <param name="func">异步操作</param>
         /// <returns>isInvalid:异步操作是否有效(多任务时，如果设置了<see cref="AutoCancelPreviousTask"/>,只会保留最后一个任务有效)；result:异步操作结果</returns>
-        public async Task<(bool IsInvalid, T Reslut)> ExecuteAsync<T>(Func<Task<T>> func)
+        public async Task<(bool IsInvalid, T Result)> ExecuteAsync<T>(Func<Task<T>> func)
         {
             var task = GetExecutableTask(func);
             var result = await await task;
