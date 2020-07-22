@@ -65,7 +65,7 @@ namespace dotnetCampus.Threading
         /// <returns>可以异步等待的队列返回的元素。</returns>
         public async Task<T> DequeueAsync(CancellationToken cancellationToken = default)
         {
-            while (!_isDisposing)
+            while (!_isDisposed)
             {
                 await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
 
@@ -80,11 +80,13 @@ namespace dotnetCampus.Threading
 
         public void Dispose()
         {
-            _isDisposing = true;
+            // 当释放的时候，将通过 _queue 的 Clear 清空内容，而通过 _semaphoreSlim 的释放让 DequeueAsync 释放锁
+            // 此时将会在 DequeueAsync 进入 TryDequeue 方法，也许此时依然有开发者在 _queue.Clear() 之后插入元素，但是没关系，我只是需要保证调用 Dispose 之后会让 DequeueAsync 方法返回而已
+            _isDisposed = true;
             _queue.Clear();
             _semaphoreSlim.Dispose();
         }
 
-        private bool _isDisposing;
+        private bool _isDisposed;
     }
 }
