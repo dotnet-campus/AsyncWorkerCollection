@@ -78,6 +78,9 @@ namespace dotnetCampus.Threading
             return default;
         }
 
+        /// <summary>
+        /// 主要用来释放锁，让 DequeueAsync 方法返回，解决因为锁让此对象内存不释放
+        /// </summary>
         public void Dispose()
         {
             // 当释放的时候，将通过 _queue 的 Clear 清空内容，而通过 _semaphoreSlim 的释放让 DequeueAsync 释放锁
