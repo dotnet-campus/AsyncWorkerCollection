@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace dotnetCampus.Threading
 {
     /// <summary>
-    /// 异步任务队列
+    /// 异步任务队列，这是重量级的方案，将会开启一个线程来做
     /// </summary>
     public class AsyncTaskQueue : IDisposable
     {
