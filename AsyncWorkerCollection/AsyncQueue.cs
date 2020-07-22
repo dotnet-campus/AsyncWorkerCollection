@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace dotnetCampus.Threading
     /// 提供一个异步的队列。可以使用 await 关键字异步等待出队，当有元素入队的时候，等待就会完成。
     /// </summary>
     /// <typeparam name="T">存入异步队列中的元素类型。</typeparam>
-    public class AsyncQueue<T>
+    public class AsyncQueue<T> : IDisposable
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ConcurrentQueue<T> _queue;
@@ -64,7 +65,7 @@ namespace dotnetCampus.Threading
         /// <returns>可以异步等待的队列返回的元素。</returns>
         public async Task<T> DequeueAsync(CancellationToken cancellationToken = default)
         {
-            while (true)
+            while (!_isDisposing)
             {
                 await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
 
@@ -73,6 +74,17 @@ namespace dotnetCampus.Threading
                     return item;
                 }
             }
+
+            return default;
         }
+
+        public void Dispose()
+        {
+            _isDisposing = true;
+            _queue.Clear();
+            _semaphoreSlim.Dispose();
+        }
+
+        private bool _isDisposing;
     }
 }
