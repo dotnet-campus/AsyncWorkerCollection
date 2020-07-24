@@ -87,6 +87,8 @@ namespace dotnetCampus.Threading
             // 此时将会在 DequeueAsync 进入 TryDequeue 方法，也许此时依然有开发者在 _queue.Clear() 之后插入元素，但是没关系，我只是需要保证调用 Dispose 之后会让 DequeueAsync 方法返回而已
             _isDisposed = true;
             _queue.Clear();
+            // 释放 DequeueAsync 方法
+            _semaphoreSlim.Release(int.MaxValue);
             _semaphoreSlim.Dispose();
         }
 
