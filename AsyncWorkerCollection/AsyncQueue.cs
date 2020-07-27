@@ -73,9 +73,35 @@ namespace dotnetCampus.Threading
                 {
                     return item;
                 }
+                else
+                {
+                    lock (_queue)
+                    {
+                        CurrentFinished?.Invoke(this, EventArgs.Empty);
+                    }
+                }
             }
 
             return default;
+        }
+
+        private event EventHandler CurrentFinished;
+
+        public async ValueTask WaitForCurrentFinished()
+        {
+            if (_queue.Count == 0)
+            {
+                return;
+            }
+
+            using var currentFinishedTask = new CurrentFinishedTask(this);
+
+            if (_queue.Count == 0)
+            {
+                return;
+            }
+
+            await currentFinishedTask.WaitForCurrentFinished();
         }
 
         /// <summary>
@@ -93,5 +119,41 @@ namespace dotnetCampus.Threading
         }
 
         private bool _isDisposed;
+
+        class CurrentFinishedTask : IDisposable
+        {
+            public CurrentFinishedTask(AsyncQueue<T> asyncQueue)
+            {
+                _asyncQueue = asyncQueue;
+
+                lock (_asyncQueue)
+                {
+                    _asyncQueue.CurrentFinished += CurrentFinished;
+                }
+            }
+
+            private void CurrentFinished(object? sender, EventArgs e)
+            {
+                _currentFinishedTaskCompletionSource.TrySetResult(true);
+            }
+
+            public async ValueTask WaitForCurrentFinished()
+            {
+                await _currentFinishedTaskCompletionSource.Task;
+            }
+
+            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource = new TaskCompletionSource<bool>();
+
+            private readonly AsyncQueue<T> _asyncQueue;
+
+            public void Dispose()
+            {
+                lock (_asyncQueue)
+                {
+                    _currentFinishedTaskCompletionSource.TrySetResult(true);
+                    _asyncQueue.CurrentFinished -= CurrentFinished;
+                }
+            }
+        }
     }
 }
