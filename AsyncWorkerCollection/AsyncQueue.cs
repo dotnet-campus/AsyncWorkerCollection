@@ -10,7 +10,7 @@ namespace dotnetCampus.Threading
     /// 提供一个异步的队列。可以使用 await 关键字异步等待出队，当有元素入队的时候，等待就会完成。
     /// </summary>
     /// <typeparam name="T">存入异步队列中的元素类型。</typeparam>
-    public class AsyncQueue<T> : IDisposable, IAsyncDisposable
+    public class AsyncQueue<T> : IDisposable
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ConcurrentQueue<T> _queue;
@@ -36,8 +36,6 @@ namespace dotnetCampus.Threading
         /// <param name="item">要入队的元素。</param>
         public void Enqueue(T item)
         {
-            ThrowIfDisposing();
-
             _queue.Enqueue(item);
             _semaphoreSlim.Release();
         }
@@ -48,15 +46,12 @@ namespace dotnetCampus.Threading
         /// <param name="source">要入队的元素序列。</param>
         public void EnqueueRange(IEnumerable<T> source)
         {
-            ThrowIfDisposing();
-
             var n = 0;
             foreach (var item in source)
             {
                 _queue.Enqueue(item);
                 n++;
             }
-
             _semaphoreSlim.Release(n);
         }
 
@@ -68,7 +63,6 @@ namespace dotnetCampus.Threading
         /// 由于此方法有返回值，后续方法可能依赖于此返回值，所以如果取消将抛出 <see cref="TaskCanceledException"/>。
         /// </param>
         /// <returns>可以异步等待的队列返回的元素。</returns>
-        /// <exception cref="ObjectDisposedException"></exception>
         public async Task<T> DequeueAsync(CancellationToken cancellationToken = default)
         {
             while (!_isDisposed)
@@ -81,18 +75,33 @@ namespace dotnetCampus.Threading
                 }
                 else
                 {
-                    // 没有内容了，此时也准备gg了，那么就 Break 了
-                    if (_isDisposing)
+                    lock (_queue)
                     {
-                        _disposeTaskCompletionSource.TrySetResult(true);
-                        break;
+                        CurrentFinished?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
 
-            ThrowIfDisposing();
-
             return default;
+        }
+
+        private event EventHandler CurrentFinished;
+
+        public async ValueTask WaitForCurrentFinished()
+        {
+            if (_queue.Count == 0)
+            {
+                return;
+            }
+
+            using var currentFinishedTask = new CurrentFinishedTask(this);
+
+            if (_queue.Count == 0)
+            {
+                return;
+            }
+
+            await currentFinishedTask.WaitForCurrentFinished();
         }
 
         /// <summary>
@@ -102,43 +111,48 @@ namespace dotnetCampus.Threading
         {
             // 当释放的时候，将通过 _queue 的 Clear 清空内容，而通过 _semaphoreSlim 的释放让 DequeueAsync 释放锁
             // 此时将会在 DequeueAsync 进入 TryDequeue 方法，也许此时依然有开发者在 _queue.Clear() 之后插入元素，但是没关系，我只是需要保证调用 Dispose 之后会让 DequeueAsync 方法返回而已
-            _isDisposing = true;
+            _isDisposed = true;
             _queue.Clear();
             // 释放 DequeueAsync 方法
             _semaphoreSlim.Release(int.MaxValue);
-            _isDisposed = true;
             _semaphoreSlim.Dispose();
         }
 
         private bool _isDisposed;
 
-        /// <summary>
-        /// 等待所有任务执行完成
-        /// </summary>
-        /// <returns></returns>
-        public async ValueTask DisposeAsync()
+        class CurrentFinishedTask : IDisposable
         {
-            _disposeTaskCompletionSource = new TaskCompletionSource<bool>();
-            _isDisposing = true;
-
-            // 释放 DequeueAsync 方法
-            _semaphoreSlim.Release(int.MaxValue);
-
-            await _disposeTaskCompletionSource.Task;
-
-            _isDisposed = true;
-            _semaphoreSlim.Dispose();
-        }
-
-        private bool _isDisposing;
-        private TaskCompletionSource<bool> _disposeTaskCompletionSource;
-
-        // 这里忽略线程安全
-        private void ThrowIfDisposing()
-        {
-            if (_isDisposing)
+            public CurrentFinishedTask(AsyncQueue<T> asyncQueue)
             {
-                throw new ObjectDisposedException(nameof(AsyncQueue<T>));
+                _asyncQueue = asyncQueue;
+
+                lock (_asyncQueue)
+                {
+                    _asyncQueue.CurrentFinished += CurrentFinished;
+                }
+            }
+
+            private void CurrentFinished(object? sender, EventArgs e)
+            {
+                _currentFinishedTaskCompletionSource.TrySetResult(true);
+            }
+
+            public async ValueTask WaitForCurrentFinished()
+            {
+                await _currentFinishedTaskCompletionSource.Task;
+            }
+
+            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource = new TaskCompletionSource<bool>();
+
+            private readonly AsyncQueue<T> _asyncQueue;
+
+            public void Dispose()
+            {
+                lock (_asyncQueue)
+                {
+                    _currentFinishedTaskCompletionSource.TrySetResult(true);
+                    _asyncQueue.CurrentFinished -= CurrentFinished;
+                }
             }
         }
     }
