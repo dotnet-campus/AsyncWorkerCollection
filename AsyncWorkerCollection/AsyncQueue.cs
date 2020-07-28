@@ -10,7 +10,7 @@ namespace dotnetCampus.Threading
     /// 提供一个异步的队列。可以使用 await 关键字异步等待出队，当有元素入队的时候，等待就会完成。
     /// </summary>
     /// <typeparam name="T">存入异步队列中的元素类型。</typeparam>
-    public class AsyncQueue<T> : IDisposable
+    public class AsyncQueue<T> : IDisposable, IAsyncDisposable
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ConcurrentQueue<T> _queue;
@@ -36,6 +36,7 @@ namespace dotnetCampus.Threading
         /// <param name="item">要入队的元素。</param>
         public void Enqueue(T item)
         {
+            ThrowIfDisposing();
             _queue.Enqueue(item);
             _semaphoreSlim.Release();
         }
@@ -46,12 +47,14 @@ namespace dotnetCampus.Threading
         /// <param name="source">要入队的元素序列。</param>
         public void EnqueueRange(IEnumerable<T> source)
         {
+            ThrowIfDisposing();
             var n = 0;
             foreach (var item in source)
             {
                 _queue.Enqueue(item);
                 n++;
             }
+
             _semaphoreSlim.Release(n);
         }
 
@@ -75,8 +78,10 @@ namespace dotnetCampus.Threading
                 }
                 else
                 {
+                    // 当前没有任务
                     lock (_queue)
                     {
+                        // 事件不是线程安全，因为存在事件的加等
                         CurrentFinished?.Invoke(this, EventArgs.Empty);
                     }
                 }
@@ -85,8 +90,10 @@ namespace dotnetCampus.Threading
             return default;
         }
 
-        private event EventHandler CurrentFinished;
-
+        /// <summary>
+        /// 等待当前的所有任务执行完成
+        /// </summary>
+        /// <returns></returns>
         public async ValueTask WaitForCurrentFinished()
         {
             if (_queue.Count == 0)
@@ -96,6 +103,8 @@ namespace dotnetCampus.Threading
 
             using var currentFinishedTask = new CurrentFinishedTask(this);
 
+            // 有线程执行事件触发，刚好此时在创建 CurrentFinishedTask 对象
+            // 此时需要重新判断是否存在任务
             if (_queue.Count == 0)
             {
                 return;
@@ -106,9 +115,13 @@ namespace dotnetCampus.Threading
 
         /// <summary>
         /// 主要用来释放锁，让 DequeueAsync 方法返回，解决因为锁让此对象内存不释放
+        /// <para></para>
+        /// 这个方法不是线程安全
         /// </summary>
         public void Dispose()
         {
+            _isDisposing = true;
+
             // 当释放的时候，将通过 _queue 的 Clear 清空内容，而通过 _semaphoreSlim 的释放让 DequeueAsync 释放锁
             // 此时将会在 DequeueAsync 进入 TryDequeue 方法，也许此时依然有开发者在 _queue.Clear() 之后插入元素，但是没关系，我只是需要保证调用 Dispose 之后会让 DequeueAsync 方法返回而已
             _isDisposed = true;
@@ -118,6 +131,44 @@ namespace dotnetCampus.Threading
             _semaphoreSlim.Dispose();
         }
 
+        /// <summary>
+        /// 等待任务执行完成之后返回，此方法不是线程安全
+        /// <para></para>
+        /// 如果在调用此方法同时添加任务，那么添加的任务存在线程安全
+        /// </summary>
+        /// <returns></returns>
+        public async ValueTask DisposeAsync()
+        {
+            _isDisposing = true;
+            await WaitForCurrentFinished();
+
+            // 在设置 _isDisposing 完成，刚好有 Enqueue 的代码
+            if (_queue.Count != 0)
+            {
+                // 再次等待
+                await WaitForCurrentFinished();
+            }
+
+            // 其实此时依然可以存在有线程在 Enqueue 执行，但是此时就忽略了
+
+            // 设置变量，此时循环将会跳出
+            _isDisposed = true;
+            _semaphoreSlim.Release(int.MaxValue);
+            _semaphoreSlim.Dispose();
+        }
+
+        // 这里忽略线程安全
+        private void ThrowIfDisposing()
+        {
+            if (_isDisposing)
+            {
+                throw new ObjectDisposedException(nameof(AsyncQueue<T>));
+            }
+        }
+
+        private event EventHandler CurrentFinished;
+
+        private bool _isDisposing;
         private bool _isDisposed;
 
         class CurrentFinishedTask : IDisposable
@@ -132,7 +183,7 @@ namespace dotnetCampus.Threading
                 }
             }
 
-            private void CurrentFinished(object? sender, EventArgs e)
+            private void CurrentFinished(object sender, EventArgs e)
             {
                 _currentFinishedTaskCompletionSource.TrySetResult(true);
             }
@@ -142,7 +193,8 @@ namespace dotnetCampus.Threading
                 await _currentFinishedTaskCompletionSource.Task;
             }
 
-            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource = new TaskCompletionSource<bool>();
+            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource =
+                new TaskCompletionSource<bool>();
 
             private readonly AsyncQueue<T> _asyncQueue;
 
