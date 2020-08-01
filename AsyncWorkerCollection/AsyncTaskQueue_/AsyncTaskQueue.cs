@@ -65,7 +65,7 @@ namespace dotnetCampus.Threading
         private AwaitableTask GetExecutableTask(Action action)
         {
             var awaitableTask = new AwaitableTask(new Task(action));
-            AddPenddingTaskToQueue(awaitableTask);
+            AddPendingTaskToQueue(awaitableTask);
             return awaitableTask;
         }
 
@@ -78,7 +78,7 @@ namespace dotnetCampus.Threading
         private AwaitableTask<TResult> GetExecutableTask<TResult>(Func<TResult> function)
         {
             var awaitableTask = new AwaitableTask<TResult>(new Task<TResult>(function));
-            AddPenddingTaskToQueue(awaitableTask);
+            AddPendingTaskToQueue(awaitableTask);
             return awaitableTask;
         }
 
@@ -87,7 +87,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        private void AddPenddingTaskToQueue(AwaitableTask task)
+        private void AddPendingTaskToQueue(AwaitableTask task)
         {
             //添加队列，加锁。
             lock (_queue)
