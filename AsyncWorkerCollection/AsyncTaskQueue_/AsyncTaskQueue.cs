@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Threading;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace dotnetCampus.Threading
@@ -15,9 +15,8 @@ namespace dotnetCampus.Threading
         /// </summary>
         public AsyncTaskQueue()
         {
-            _autoResetEvent = new AutoResetEvent(false);
-            _thread = new Thread(InternalRunning) { IsBackground = true };
-            _thread.Start();
+            _autoResetEvent = new AsyncAutoResetEvent(false);
+            InternalRunning();
         }
 
         #region 执行
@@ -65,7 +64,7 @@ namespace dotnetCampus.Threading
         private AwaitableTask GetExecutableTask(Action action)
         {
             var awaitableTask = new AwaitableTask(new Task(action));
-            AddPenddingTaskToQueue(awaitableTask);
+            AddPendingTaskToQueue(awaitableTask);
             return awaitableTask;
         }
 
@@ -78,7 +77,7 @@ namespace dotnetCampus.Threading
         private AwaitableTask<TResult> GetExecutableTask<TResult>(Func<TResult> function)
         {
             var awaitableTask = new AwaitableTask<TResult>(new Task<TResult>(function));
-            AddPenddingTaskToQueue(awaitableTask);
+            AddPendingTaskToQueue(awaitableTask);
             return awaitableTask;
         }
 
@@ -87,7 +86,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        private void AddPenddingTaskToQueue(AwaitableTask task)
+        private void AddPendingTaskToQueue(AwaitableTask task)
         {
             //添加队列，加锁。
             lock (_queue)
@@ -102,14 +101,14 @@ namespace dotnetCampus.Threading
 
         #region 内部运行
 
-        private void InternalRunning()
+        private async void InternalRunning()
         {
             while (!_isDisposed)
             {
                 if (_queue.Count == 0)
                 {
                     //等待后续任务
-                    _autoResetEvent.WaitOne();
+                    await _autoResetEvent.WaitOneAsync();
                 }
 
                 while (TryGetNextTask(out var task))
@@ -151,6 +150,7 @@ namespace dotnetCampus.Threading
                     return true;
                 }
 
+                Debug.Assert(task != null);
                 //并发操作，设置任务不可执行
                 task.SetNotExecutable();
             }
@@ -182,10 +182,10 @@ namespace dotnetCampus.Threading
             if (_isDisposed) return;
             if (disposing)
             {
-                _autoResetEvent.Dispose();
+                //_autoResetEvent.Dispose();
             }
 
-            _thread = null;
+            _queue.Clear();
             _autoResetEvent = null;
             _isDisposed = true;
         }
@@ -206,8 +206,7 @@ namespace dotnetCampus.Threading
 
         private bool _isDisposed;
         private readonly ConcurrentQueue<AwaitableTask> _queue = new ConcurrentQueue<AwaitableTask>();
-        private Thread _thread;
-        private AutoResetEvent _autoResetEvent;
+        private AsyncAutoResetEvent _autoResetEvent;
 
         #endregion
     }
