@@ -1,15 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
         <RootNamespace>dotnetCampus.Threading</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <AssemblyName>dotnetCampus.AsyncWorkerCollection</AssemblyName>
     </PropertyGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)'!='net45'">
+        <Compile Remove="IAsyncDisposable.cs" />
+        <Compile Remove="ConcurrentQueueExtension.cs" />
+    </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19099-alpha">
+        <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19353-alpha">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)'=='net45'">
+        <PackageReference Include="System.ValueTuple" Version="4.5">
+
         </PackageReference>
     </ItemGroup>
 </Project>
