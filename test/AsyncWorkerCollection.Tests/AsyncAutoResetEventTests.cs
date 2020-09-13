@@ -24,18 +24,21 @@ namespace AsyncWorkerCollection.Tests
                 var mock = new Mock<IFakeJob>();
 
                 // Action
+                // 先加入一个等待的线程，用于等待第一次的 Set 对应的等待
+                var manualResetEvent = new ManualResetEvent(false);
                 var task1 = Task.Run(async () =>
                 {
-                    await asyncAutoResetEvent.WaitOneAsync();
+                    var task = asyncAutoResetEvent.WaitOneAsync();
+                    manualResetEvent.Set();
+                    await task;
                     mock.Object.Do();
                 });
+                // 使用 manualResetEvent 可以等待让 task1 执行到了 WaitOne 方法
+                manualResetEvent.WaitOne();
 
                 for (var i = 0; i < 5; i++)
                 {
                     asyncAutoResetEvent.Set();
-                    // 先干掉第一次的 task 方法，测试超过了第一次的等待
-                    // 如果没有下面方法，可以认为 task1 还没创建出来，此时调用 Set 还是在没有线程等待
-                    Task.WaitAny(task1, Task.Delay(TimeSpan.FromSeconds(1)));
                 }
 
                 var taskList = new List<Task>();
