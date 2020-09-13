@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace dotnetCampus.Threading
     /// 异步等待的autoresetevent
     /// WaitOneAsync方法会返回一个task，通过await方式等待
     /// </summary>
-    public class AsyncAutoResetEvent
+    public class AsyncAutoResetEvent : IDisposable
     {
         /// <summary>
         /// 提供一个信号初始值，确定是否有信号
@@ -19,22 +20,27 @@ namespace dotnetCampus.Threading
             _isSignaled = initialState;
         }
 
-        private static readonly Task CompletedSourceTask
-#if NETFRAMEWORK
-            = Task.FromResult(true);
-#else
-            = Task.CompletedTask;
-#endif
+        ~AsyncAutoResetEvent()
+        {
+            Dispose();
+        }
 
+        private static readonly Task<bool> CompletedSourceTask
+            = Task.FromResult(true);
 
         /// <summary>
         /// 异步等待一个信号，需要await
         /// </summary>
-        /// <returns></returns>
-        public Task WaitOneAsync()
+        /// <returns>如果是正常解锁，那么返回 true 值。如果是对象调用 <see cref="Dispose"/> 释放，那么返回 false 值</returns>
+        public Task<bool> WaitOneAsync()
         {
             lock (_locker)
             {
+                if (_isDisposing)
+                {
+                    throw new ObjectDisposedException(nameof(AsyncAutoResetEvent));
+                }
+
                 if (_isSignaled)
                 {
                     // 按照 AutoResetEvent 的设计，在没有任何等待进入时，如果有设置 Set 方法，那么下一次第一个进入的等待将会通过
@@ -55,6 +61,7 @@ namespace dotnetCampus.Threading
         public void Set()
         {
             TaskCompletionSource<bool> releaseSource = null;
+            bool result;
             lock (_locker)
             {
                 if (_waitQueue.Any())
@@ -69,10 +76,42 @@ namespace dotnetCampus.Threading
                         _isSignaled = true;
                     }
                 }
+
+                // 如果这个类被释放了，那么返回 false 值
+                result = !_isDisposing;
             }
 
-            releaseSource?.SetResult(true);
+            releaseSource?.SetResult(result);
         }
+
+        /// <summary>
+        /// 非线程安全 调用时将会释放所有等待 <see cref="WaitOneAsync"/> 方法
+        /// </summary>
+        public void Dispose()
+        {
+            lock (_locker)
+            {
+                _isDisposing = true;
+            }
+
+            GC.SuppressFinalize(this);
+
+            while (true)
+            {
+                lock (_locker)
+                {
+                    if (_waitQueue.Count == 0)
+                    {
+                        return;
+                    }
+                }
+
+                // 修复 https://github.com/dotnet-campus/AsyncWorkerCollection/issues/16
+                Set();
+            }
+        }
+
+        private bool _isDisposing;
 
         private readonly object _locker = new object();
 
