@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if NETFRAMEWORK
+using ValueTask = System.Threading.Tasks.Task;
+#endif
+
 namespace dotnetCampus.Threading
 {
     /// <summary>

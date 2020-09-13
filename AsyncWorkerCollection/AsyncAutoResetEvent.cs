@@ -19,7 +19,13 @@ namespace dotnetCampus.Threading
             _isSignaled = initialState;
         }
 
-        private static readonly Task CompletedSourceTask = Task.FromResult(true);
+        private static readonly Task CompletedSourceTask
+#if NETFRAMEWORK
+            = Task.FromResult(true);
+#else
+            = Task.CompletedTask;
+#endif
+
 
         /// <summary>
         /// 异步等待一个信号，需要await
@@ -31,6 +37,8 @@ namespace dotnetCampus.Threading
             {
                 if (_isSignaled)
                 {
+                    // 按照 AutoResetEvent 的设计，在没有任何等待进入时，如果有设置 Set 方法，那么下一次第一个进入的等待将会通过
+                    // 也就是在没有任何等待时，无论调用多少次 Set 方法，在调用之后只有一个等待通过
                     _isSignaled = false;
                     return CompletedSourceTask;
                 }
@@ -42,7 +50,7 @@ namespace dotnetCampus.Threading
         }
 
         /// <summary>
-        /// 设置一个信号量，让一个waitone获得信号
+        /// 设置一个信号量，让一个waitone获得信号，每次调用 <see cref="Set"/> 方法最多只有一个等待通过
         /// </summary>
         public void Set()
         {
@@ -71,6 +79,9 @@ namespace dotnetCampus.Threading
         private readonly Queue<TaskCompletionSource<bool>> _waitQueue =
             new Queue<TaskCompletionSource<bool>>();
 
+        /// <summary>
+        /// 用于在没有任何等待时让下一次等待通过
+        /// </summary>
         private bool _isSignaled;
     }
 }
