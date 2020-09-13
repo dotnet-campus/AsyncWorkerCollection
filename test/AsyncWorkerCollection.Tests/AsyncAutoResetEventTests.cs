@@ -18,7 +18,6 @@ namespace AsyncWorkerCollection.Tests
         {
             "当使用 Set 次数超过 WaitOneAsync 次数，多余的 Set 只被计算一次".Test(() =>
             {
-                Console.WriteLine("当使用 Set 次数超过 WaitOneAsync 次数，多余的 Set 只被计算一次");
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
                 var mock = new Mock<IFakeJob>();
@@ -96,11 +95,15 @@ namespace AsyncWorkerCollection.Tests
 
                 // Action
                 var taskList = new List<Task>(10);
+                // 使用 SemaphoreSlim 让测试线程全部创建
+                var semaphoreSlim = new SemaphoreSlim(0, 10);
                 for (var i = 0; i < 10; i++)
                 {
                     var task = Task.Run(async () =>
                     {
-                        await asyncAutoResetEvent.WaitOneAsync();
+                        var t = asyncAutoResetEvent.WaitOneAsync();
+                        semaphoreSlim.Release();
+                        await t;
                         mock.Object.Do();
                     });
                     taskList.Add(task);
@@ -109,11 +112,11 @@ namespace AsyncWorkerCollection.Tests
                 // 等待 Task 都进入 await 方法
                 // 如果没有等待，可以都在线程创建上面，此时调用多次的 Set 只是做初始化
                 // 也就是当前没有线程等待，然后进行多次 Set 方法
-                foreach (var task in taskList)
+                for (int i = 0; i < 10; i++)
                 {
-                    Task.WaitAny(task, Task.Delay(TimeSpan.FromSeconds(1)));
+                    semaphoreSlim.Wait();
                 }
-
+               
                 for (var i = 0; i < 5; i++)
                 {
                     asyncAutoResetEvent.Set();
