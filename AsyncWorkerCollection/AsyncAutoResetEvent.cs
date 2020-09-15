@@ -68,7 +68,7 @@ namespace dotnetCampus.Threading
             bool result;
             lock (_locker)
             {
-                if (_waitQueue.Any())
+                if (_waitQueue.Count > 0)
                 {
                     releaseSource = _waitQueue.Dequeue();
                 }
