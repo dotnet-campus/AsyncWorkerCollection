@@ -29,14 +29,18 @@ namespace dotnetCampus.Threading
             = Task.FromResult(true);
 
         /// <summary>
-        /// 异步等待一个信号，需要await
+        /// 异步等待一个信号，需要 await 等待
+        /// <para></para>
+        /// 可以通过返回值是 true 或 false 判断当前是收到信号还是此类被释放
         /// </summary>
-        /// <returns>如果是正常解锁，那么返回 true 值。如果是对象调用 <see cref="Dispose"/> 释放，那么返回 false 值</returns>
+        /// <returns>
+        /// 如果是正常解锁，那么返回 true 值。如果是对象调用 <see cref="Dispose"/> 释放，那么返回 false 值
+        /// </returns>
         public Task<bool> WaitOneAsync()
         {
             lock (_locker)
             {
-                if (_isDisposing)
+                if (_isDisposed)
                 {
                     throw new ObjectDisposedException(nameof(AsyncAutoResetEvent));
                 }
@@ -78,7 +82,7 @@ namespace dotnetCampus.Threading
                 }
 
                 // 如果这个类被释放了，那么返回 false 值
-                result = !_isDisposing;
+                result = !_isDisposed;
             }
 
             releaseSource?.SetResult(result);
@@ -91,7 +95,7 @@ namespace dotnetCampus.Threading
         {
             lock (_locker)
             {
-                _isDisposing = true;
+                _isDisposed = true;
             }
 
             GC.SuppressFinalize(this);
@@ -111,7 +115,7 @@ namespace dotnetCampus.Threading
             }
         }
 
-        private bool _isDisposing;
+        private bool _isDisposed;
 
         private readonly object _locker = new object();
 
