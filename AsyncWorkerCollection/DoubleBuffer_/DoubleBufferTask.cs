@@ -3,12 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+#if NETFRAMEWORK
+using ValueTask = System.Threading.Tasks.Task;
+#endif
+
 namespace dotnetCampus.Threading
 {
     /// <summary>
     /// 双缓存任务
     /// </summary>
-    public class DoubleBufferTask<T, TU> where T : class, ICollection<TU>
+    public class DoubleBufferTask<T, TU> : IAsyncDisposable
+        where T : class, ICollection<TU>
     {
         /// <summary>
         /// 创建双缓存任务，执行任务的方法放在 <paramref name="doTask"/> 方法
@@ -92,5 +97,12 @@ namespace dotnetCampus.Threading
         private readonly Func<T, Task> _doTask;
 
         private DoubleBuffer<T, TU> DoubleBuffer { get; }
+
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
+        {
+            Finish();
+            await WaitAllTaskFinish();
+        }
     }
 }
