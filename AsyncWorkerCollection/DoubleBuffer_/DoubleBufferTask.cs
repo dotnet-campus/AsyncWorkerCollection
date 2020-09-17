@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace dotnetCampus.Threading
     /// <summary>
     /// 双缓存任务
     /// </summary>
-    public class DoubleBufferTask<T, TU> where T : class, ICollection<TU>, new()
+    public class DoubleBufferTask<T, TU> where T : class, ICollection<TU>
     {
         /// <summary>
         /// 创建双缓存任务，执行任务的方法放在 <paramref name="doTask"/> 方法
@@ -17,9 +18,12 @@ namespace dotnetCampus.Threading
         /// <para></para>
         /// 传入的 List&lt;T&gt; 就是需要执行的任务，请不要将传入的 List&lt;T&gt; 保存到本地字段
         /// </param>
-        public DoubleBufferTask(Func<T, Task> doTask)
+        /// <param name="aList"></param>
+        /// <param name="bList"></param>
+        public DoubleBufferTask(T aList, T bList, Func<T, Task> doTask)
         {
             _doTask = doTask;
+            DoubleBuffer = new DoubleBuffer<T, TU>(aList, bList);
         }
 
         /// <summary>
@@ -87,6 +91,6 @@ namespace dotnetCampus.Threading
 
         private readonly Func<T, Task> _doTask;
 
-        private DoubleBuffer<T, TU> DoubleBuffer { get; } = new DoubleBuffer<T, TU>(new T(), new T());
+        private DoubleBuffer<T, TU> DoubleBuffer { get; }
     }
 }
