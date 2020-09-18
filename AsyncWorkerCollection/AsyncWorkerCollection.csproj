@@ -4,6 +4,7 @@
         <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
         <RootNamespace>dotnetCampus.Threading</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>dotnetCampus.AsyncWorkerCollection</AssemblyName>
     </PropertyGroup>
 
