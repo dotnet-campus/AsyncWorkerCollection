@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>net45;netcoreapp3.1;netstandard2.0</TargetFrameworks>
         <RootNamespace>dotnetCampus.Threading</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>dotnetCampus.AsyncWorkerCollection</AssemblyName>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)'!='net45'">
+    <ItemGroup Condition="'$(TargetFramework)'!='net45' AND '$(TargetFramework)'!='netstandard2.0'">
         <Compile Remove="IAsyncDisposable.cs" />
         <Compile Remove="ConcurrentQueueExtension.cs" />
     </ItemGroup>
@@ -22,5 +22,8 @@
         <PackageReference Include="System.ValueTuple" Version="4.5">
 
         </PackageReference>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     </ItemGroup>
 </Project>
