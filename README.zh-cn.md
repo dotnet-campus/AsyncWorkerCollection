@@ -69,7 +69,7 @@ var fooTask = await asyncQueue.DequeueAsync();
 var doubleBufferTask = new DoubleBufferTask<Foo>(list =>
 {
     // 执行批量的 List<Foo> 任务的方法
-	// 这个传入的委托将会在缓存有数据时被调用，每次调用的时候传入的 list 列表至少存在一个元素
+    // 这个传入的委托将会在缓存有数据时被调用，每次调用的时候传入的 list 列表至少存在一个元素
 });
 
 // 其他线程调用 AddTask 方法加入任务
