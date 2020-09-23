@@ -85,3 +85,17 @@ await doubleBufferTask.WaitAllTaskFinish();
 ```
 
 详细请看 [dotnet 双缓存数据结构设计 下载库的文件写入缓存框架](https://blog.lindexi.com/post/dotnet-%E5%8F%8C%E7%BC%93%E5%AD%98%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1-%E4%B8%8B%E8%BD%BD%E5%BA%93%E7%9A%84%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E7%BC%93%E5%AD%98%E6%A1%86%E6%9E%B6.html )
+
+### AsyncAutoResetEvent
+
+异步版本的 AutoResetEvent 锁
+
+功能上和 AutoResetEvent 相同，只是将 WaitOne 替换为 WaitOneAsync 用于支持异步等待
+
+详细请看 [C# dotnet 高性能多线程工具 AsyncAutoResetEvent 异步等待使用方法和原理](https://blog.lindexi.com/post/C-dotnet-%E9%AB%98%E6%80%A7%E8%83%BD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B7%A5%E5%85%B7-AsyncAutoResetEvent-%E5%BC%82%E6%AD%A5%E7%AD%89%E5%BE%85%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E5%92%8C%E5%8E%9F%E7%90%86.html )
+
+### AsyncManualResetEvent
+
+异步版本的 ManualResetEvent 锁
+
+功能上和 ManualResetEvent 相同，只是将 WaitOne 替换为 WaitOneAsync 用于支持异步等待
