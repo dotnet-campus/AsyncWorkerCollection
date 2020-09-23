@@ -52,19 +52,19 @@ An asynchronous queue that supports multiple threads
 Create a queue:
 
 ```csharp
-    var asyncQueue = new AsyncQueue<FooTask>();
+  var asyncQueue = new AsyncQueue<FooTask>();
 ```
 
 Add task to queue:
 
 ```csharp
-   asyncQueue.Enqueue(new FooTask());
+  asyncQueue.Enqueue(new FooTask());
 ```
 
 Waiting for the task to dequeue:
 
 ```csharp
-    var fooTask = await asyncQueue.DequeueAsync();
+  var fooTask = await asyncQueue.DequeueAsync();
 ```
 
 ## Contributing
