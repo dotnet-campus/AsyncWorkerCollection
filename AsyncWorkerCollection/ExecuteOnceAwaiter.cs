@@ -8,7 +8,12 @@ namespace dotnetCampus.Threading
     /// 只执行一次的等待
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public class ExecuteOnceAwaiter<TResult>
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class ExecuteOnceAwaiter<TResult>
     {
         /// <summary>
         /// 创建只执行一次的等待，调用 <see cref="ExecuteAsync"/> 时，无论调用多少次，只会执行 <paramref name="asyncAction"/> 一次

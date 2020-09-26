@@ -14,7 +14,12 @@ namespace dotnetCampus.Threading
     /// 提供一个异步的队列。可以使用 await 关键字异步等待出队，当有元素入队的时候，等待就会完成。
     /// </summary>
     /// <typeparam name="T">存入异步队列中的元素类型。</typeparam>
-    public class AsyncQueue<T> : IDisposable, IAsyncDisposable
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class AsyncQueue<T> : IDisposable, IAsyncDisposable
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ConcurrentQueue<T> _queue;

@@ -12,7 +12,12 @@ namespace dotnetCampus.Threading
     /// <summary>
     /// 双缓存任务
     /// </summary>
-    public class DoubleBufferTask<T, TU> : IAsyncDisposable
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class DoubleBufferTask<T, TU> : IAsyncDisposable
         where T : class, ICollection<TU>
     {
         /// <summary>

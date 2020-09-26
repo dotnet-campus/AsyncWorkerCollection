@@ -9,7 +9,12 @@ namespace dotnetCampus.Threading
     /// 双缓存任务
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class DoubleBufferTask<T> : DoubleBufferTask<List<T>, T>
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class DoubleBufferTask<T> : DoubleBufferTask<List<T>, T>
     {
         /// <summary>
         /// 创建双缓存任务，执行任务的方法放在 <paramref name="doTask"/> 方法
