@@ -31,7 +31,7 @@ namespace dotnetCampus.Threading
         /// 初始化完成之后调用，这个方法只能调用一次
         /// </summary>
         /// <exception cref="InvalidOperationException">如果调用多次，那么将抛出此异常</exception>
-        protected void OnInitialized()
+        public void OnInitialized()
         {
             if (_isInitialized)
             {
@@ -55,6 +55,26 @@ namespace dotnetCampus.Threading
                 }
             }
         }
+
+        /// <summary>
+        /// 加入任务
+        /// </summary>
+        /// <param name="data"></param>
+        public void AddTask(T data)
+        {
+            _doubleBufferTask.AddTask(data);
+        }
+
+        /// <summary>
+        /// 完成任务
+        /// </summary>
+        public void Finish() => _doubleBufferTask.Finish();
+
+        /// <summary>
+        /// 等待完成任务，只有在调用 <see cref="Finish"/> 之后，所有任务执行完成才能完成
+        /// </summary>
+        /// <returns></returns>
+        public Task WaitAllTaskFinish() => _doubleBufferTask.WaitAllTaskFinish();
 
         private object Locker => _doubleBufferTask;
 
