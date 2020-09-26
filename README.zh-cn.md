@@ -99,3 +99,13 @@ await doubleBufferTask.WaitAllTaskFinish();
 异步版本的 ManualResetEvent 锁
 
 功能上和 ManualResetEvent 相同，只是将 WaitOne 替换为 WaitOneAsync 用于支持异步等待
+
+### ExecuteOnceAwaiter
+
+支持本机内多线程调用某一确定的任务的执行，任务仅执行一次，多次调用均返回相同结果
+
+在任务执行完成之后，可以重置任务状态，让任务再次执行
+
+如用来作为执行 同步 这个业务的工具。也就是在 同步 这个业务执行过程中，不允许再次执行 同步 这个业务。同时只要同步过了，那么再次调用只是返回同步结果。只有在同步之后状态发生变更之后，才能再次同步
+
+详细请看 [C# dotnet 高性能多线程工具 ExecuteOnceAwaiter 只执行一次的任务](https://lindexi.gitee.io/post/C-dotnet-%E9%AB%98%E6%80%A7%E8%83%BD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B7%A5%E5%85%B7-ExecuteOnceAwaiter-%E5%8F%AA%E6%89%A7%E8%A1%8C%E4%B8%80%E6%AC%A1%E7%9A%84%E4%BB%BB%E5%8A%A1.html )
