@@ -8,7 +8,12 @@ namespace dotnetCampus.Threading
     /// 异步等待的autoresetevent
     /// WaitOneAsync方法会返回一个task，通过await方式等待
     /// </summary>
-    public class AsyncAutoResetEvent : IDisposable
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class AsyncAutoResetEvent : IDisposable
     {
         /// <summary>
         /// 提供一个信号初始值，确定是否有信号

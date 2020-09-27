@@ -7,7 +7,12 @@ namespace dotnetCampus.Threading
     /// <summary>
     /// 可等待的任务
     /// </summary>
-    public class AwaitableTask
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class AwaitableTask
     {
         /// <summary>
         /// 获取任务是否为不可执行状态

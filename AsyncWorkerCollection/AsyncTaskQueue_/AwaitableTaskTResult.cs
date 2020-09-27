@@ -8,7 +8,12 @@ namespace dotnetCampus.Threading
     /// 可等待的任务
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public class AwaitableTask<TResult> : AwaitableTask
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class AwaitableTask<TResult> : AwaitableTask
     {
         /// <summary>
         /// 初始化可等待的任务
