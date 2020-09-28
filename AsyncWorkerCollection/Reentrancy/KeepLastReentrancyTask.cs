@@ -113,7 +113,6 @@ namespace dotnetCampus.Threading.Reentrancy
                     }
                 }
 
-
                 lock (_locker)
                 {
                     hasTask = _queue.TryPeek(out _);
@@ -125,7 +124,6 @@ namespace dotnetCampus.Threading.Reentrancy
                 }
             }
         }
-
 
         private void SetException(Exception exception)
         {
