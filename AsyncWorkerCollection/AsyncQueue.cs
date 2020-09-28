@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
@@ -96,7 +97,7 @@ namespace dotnetCampus.Threading
                 }
             }
 
-            return default;
+            return default!;
         }
 
         /// <summary>
@@ -175,7 +176,7 @@ namespace dotnetCampus.Threading
             }
         }
 
-        private event EventHandler CurrentFinished;
+        private event EventHandler? CurrentFinished;
 
         private bool _isDisposing;
         private bool _isDisposed;

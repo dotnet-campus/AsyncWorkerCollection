@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,6 +25,9 @@ namespace dotnetCampus.Threading
             _isSignaled = initialState;
         }
 
+        /// <summary>
+        /// 析构方法
+        /// </summary>
         ~AsyncAutoResetEvent()
         {
             Dispose();
@@ -68,7 +72,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Set()
         {
-            TaskCompletionSource<bool> releaseSource = null;
+            TaskCompletionSource<bool>? releaseSource = null;
             bool result;
             lock (_locker)
             {
