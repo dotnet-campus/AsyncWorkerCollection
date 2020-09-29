@@ -14,7 +14,12 @@ namespace dotnetCampus.Threading.Reentrancy
     /// 重入任务中单次执行时所得到的返回值。
     /// 注意，对于部分类型的重入任务，返回值可能会是此类型的默认值；具体取决于不同的重入策略是否会导致任务是否全部被执行。
     /// </typeparam>
-    public abstract class ReentrancyTask<TParameter, TReturn>
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    abstract class ReentrancyTask<TParameter, TReturn>
     {
         /// <summary>
         /// 在派生类中执行重入任务的时候，从此处获取需要执行的可重入异步任务。
