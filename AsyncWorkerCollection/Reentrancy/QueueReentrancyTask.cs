@@ -16,7 +16,12 @@ namespace dotnetCampus.Threading.Reentrancy
     /// 重入任务中单次执行时所得到的返回值。
     /// 此重入策略不会忽略任何返回值。
     /// </typeparam>
-    public sealed class QueueReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    sealed class QueueReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
     {
         /// <summary>
         /// 用于原子操作判断当前是否正在执行队列中的可重入任务。
