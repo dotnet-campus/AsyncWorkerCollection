@@ -17,7 +17,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class LimitedRunningCountTask
+        class LimitedRunningCountTask
     {
         /// <summary>
         /// 创建限制执行数量的任务
@@ -96,7 +96,6 @@ namespace dotnetCampus.Threading
 
             await WaitForFreeTask.Task;
         }
-
 
         private TaskCompletionSource<bool>? RunningBreakTask
         {
