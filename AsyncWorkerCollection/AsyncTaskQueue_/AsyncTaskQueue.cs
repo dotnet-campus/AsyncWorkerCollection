@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace dotnetCampus.Threading
 {
     /// <summary>
-    /// 异步任务队列，这是重量级的方案，将会开启一个线程来做
+    /// 异步任务队列，将任务加入到队列里面按照顺序执行
     /// </summary>
 #if PublicAsInternal
     internal
@@ -31,7 +31,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         /// <typeparam name="T">返回结果类型</typeparam>
         /// <param name="func">异步操作</param>
-        /// <returns>isInvalid:异步操作是否有效(多任务时，如果设置了<see cref="AutoCancelPreviousTask"/>,只会保留最后一个任务有效)；result:异步操作结果</returns>
+        /// <returns>IsInvalid:异步操作是否有效(多任务时，如果设置了<see cref="AutoCancelPreviousTask"/>，只会保留最后一个任务有效)；Result:异步操作结果</returns>
         public async Task<(bool IsInvalid, T Result)> ExecuteAsync<T>(Func<Task<T>> func)
         {
             var task = GetExecutableTask(func);
@@ -191,7 +191,6 @@ namespace dotnetCampus.Threading
             }
 
             _queue.Clear();
-            _autoResetEvent = null;
             _isDisposed = true;
         }
 
@@ -200,18 +199,18 @@ namespace dotnetCampus.Threading
         #region 属性及字段
 
         /// <summary>
-        /// 是否使用单线程完成任务.
+        /// 是否使用单线程完成任务
         /// </summary>
         public bool UseSingleThread { get; set; } = true;
 
         /// <summary>
-        /// 自动取消以前的任务。
+        /// 自动取消以前的任务
         /// </summary>
         public bool AutoCancelPreviousTask { get; set; } = false;
 
         private bool _isDisposed;
         private readonly ConcurrentQueue<AwaitableTask> _queue = new ConcurrentQueue<AwaitableTask>();
-        private AsyncAutoResetEvent _autoResetEvent;
+        private readonly AsyncAutoResetEvent _autoResetEvent;
 
         #endregion
     }
