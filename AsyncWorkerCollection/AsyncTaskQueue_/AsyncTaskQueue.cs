@@ -50,6 +50,7 @@ namespace dotnetCampus.Threading
         /// <typeparam name="T"></typeparam>
         /// <param name="func"></param>
         /// <returns></returns>
+        // ReSharper disable once UnusedTypeParameter
         public async Task<bool> ExecuteAsync<T>(Func<Task> func)
         {
             var task = GetExecutableTask(func);
@@ -94,7 +95,7 @@ namespace dotnetCampus.Threading
         private void AddPendingTaskToQueue(AwaitableTask task)
         {
             //添加队列，加锁。
-            lock (_queue)
+            lock (Locker)
             {
                 _queue.Enqueue(task);
                 //开始执行任务
@@ -205,13 +206,30 @@ namespace dotnetCampus.Threading
         public bool UseSingleThread { get; set; } = true;
 
         /// <summary>
-        /// 自动取消以前的任务
+        /// 自动取消以前的任务，此属性应该是在创建对象完成之后给定，不允许在任务执行过程中更改
         /// </summary>
-        public bool AutoCancelPreviousTask { get; set; } = false;
+        /// 设置和获取不需要加上锁，因为这是原子的，业务上也不会有开发者不断修改这个值。也就是说这个属性只有在对象创建就给定
+        public bool AutoCancelPreviousTask
+        {
+            get => _autoCancelPreviousTask;
+            set
+            {
+                if (_lastDoingTask != null)
+                {
+                    // 仅用于开发时告诉开发者，在任务开始之后调用是不对的
+                    throw new InvalidOperationException($"此属性应该是在创建对象完成之后给定，不允许在任务执行过程中更改");
+                }
 
+                _autoCancelPreviousTask = value;
+            }
+        }
+
+        private object Locker => _queue;
         private bool _isDisposed;
         private readonly ConcurrentQueue<AwaitableTask> _queue = new ConcurrentQueue<AwaitableTask>();
         private readonly AsyncAutoResetEvent _autoResetEvent;
+        // ReSharper disable once RedundantDefaultMemberInitializer
+        private bool _autoCancelPreviousTask = false;
 
         #endregion
     }
