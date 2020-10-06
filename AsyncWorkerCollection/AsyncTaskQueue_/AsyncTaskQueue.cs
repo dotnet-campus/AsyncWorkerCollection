@@ -187,10 +187,11 @@ namespace dotnetCampus.Threading
             if (_isDisposed) return;
             if (disposing)
             {
-                //_autoResetEvent.Dispose();
             }
 
+            // 先调用 Clear 方法，然后调用  _autoResetEvent.Dispose 此时的任务如果还没执行的，就不会执行
             _queue.Clear();
+            _autoResetEvent.Dispose();
             _isDisposed = true;
         }
 
