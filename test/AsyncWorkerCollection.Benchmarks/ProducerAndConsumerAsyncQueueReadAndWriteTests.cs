@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using dotnetCampus.Threading;
 
@@ -10,6 +11,67 @@ namespace AsyncWorkerCollection.Benchmarks
     [BenchmarkCategory(nameof(ProducerAndConsumerAsyncQueueReadAndWriteTests))]
     public class ProducerAndConsumerAsyncQueueReadAndWriteTests
     {
+        [Benchmark()]
+        public async Task DoubleBufferTaskReadAndWrite()
+        {
+            var doubleBufferTask = new DoubleBufferTask<Foo>(list => Task.CompletedTask);
+            var foo = new Foo();
+
+            for (int i = 0; i < MaxCount; i++)
+            {
+                doubleBufferTask.AddTask(foo);
+            }
+
+            doubleBufferTask.Finish();
+            await doubleBufferTask.WaitAllTaskFinish();
+        }
+
+        [Benchmark()]
+        public async Task DoubleBufferTaskWithCapacityReadAndWrite()
+        {
+            var doubleBufferTask = new DoubleBufferTask<List<Foo>, Foo>(new List<Foo>(MaxCount),
+                new List<Foo>(MaxCount), list => Task.CompletedTask);
+            var foo = new Foo();
+
+            for (int i = 0; i < MaxCount; i++)
+            {
+                doubleBufferTask.AddTask(foo);
+            }
+
+            doubleBufferTask.Finish();
+            await doubleBufferTask.WaitAllTaskFinish();
+        }
+
+        [Benchmark()]
+        [Arguments(2)]
+        [Arguments(5)]
+        [Arguments(10)]
+        public async Task DoubleBufferTaskWithMultiThreadReadAndWrite(int threadCount)
+        {
+            var doubleBufferTask = new DoubleBufferTask<List<Foo>, Foo>(new List<Foo>(MaxCount),
+                new List<Foo>(MaxCount), list => Task.CompletedTask);
+            var foo = new Foo();
+
+            var taskList = new Task[threadCount];
+
+            for (int j = 0; j < threadCount; j++)
+            {
+                var task = Task.Run(() =>
+                {
+                    for (int i = 0; i < MaxCount / threadCount; i++)
+                    {
+                        doubleBufferTask.AddTask(foo);
+                    }
+                });
+                taskList[j] = task;
+            }
+
+            await Task.WhenAll(taskList);
+
+            doubleBufferTask.Finish();
+            await doubleBufferTask.WaitAllTaskFinish();
+        }
+
         [Benchmark()]
         public async Task AsyncQueueEnqueueAndDequeueTest()
         {
