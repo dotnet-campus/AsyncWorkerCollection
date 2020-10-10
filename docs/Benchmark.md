@@ -24,10 +24,14 @@ Job=InProcess  Toolchain=InProcessEmitToolchain
 
 ### AsyncQueue
 
-|                Method |     Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 | Gen 2 | Allocated |
-|---------------------- |---------:|---------:|---------:|------:|--------:|-------:|-------:|------:|----------:|
-| AsyncQueueEnqueueTest | 41.31 us | 0.784 us | 0.733 us |  0.87 |    0.02 | 8.1177 |      - |     - |  33.22 KB |
-| ChannelWriteAsyncTest | 47.50 us | 0.508 us | 0.450 us |  1.00 |    0.00 | 4.1504 | 0.0610 |     - |  17.01 KB |
+|                                         Method |       Mean |    Error |   StdDev | Ratio | RatioSD |   Gen 0 |  Gen 1 | Gen 2 | Allocated |
+|----------------------------------------------- |-----------:|---------:|---------:|------:|--------:|--------:|-------:|------:|----------:|
+|                   DoubleBufferTaskReadAndWrite | 2,995.9 us | 55.31 us | 54.32 us | 22.89 |    0.82 | 15.6250 |      - |     - |  70.68 KB |
+|       DoubleBufferTaskWithCapacityReadAndWrite | 3,005.9 us | 59.24 us | 74.92 us | 22.96 |    0.72 | 19.5313 |      - |     - |  86.29 KB |
+|                AsyncQueueEnqueueAndDequeueTest |   141.6 us |  2.76 us |  3.68 us |  1.08 |    0.03 | 25.1465 | 2.4414 |     - | 103.53 KB |
+| AsyncQueueEnqueueAndDequeueTestWithMultiThread |   284.4 us |  5.63 us |  7.52 us |  2.17 |    0.07 | 26.3672 | 2.4414 |     - | 104.55 KB |
+|                        ChannelReadAndWriteTest |   130.9 us |  2.55 us |  3.41 us |  1.00 |    0.00 |  4.1504 |      - |     - |  17.15 KB |
+|         ChannelReadAndWriteTestWithMultiThread |   273.9 us |  4.98 us |  4.66 us |  2.10 |    0.07 |  3.9063 |      - |     - |  17.83 KB |
 
 
 ### DoubleBufferTask
