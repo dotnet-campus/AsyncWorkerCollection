@@ -77,6 +77,23 @@ namespace AsyncWorkerCollection.Benchmarks
         {
             var asyncQueue = new AsyncQueue<Foo>();
             var foo = new Foo();
+
+            for (int i = 0; i < MaxCount; i++)
+            {
+                asyncQueue.Enqueue(foo);
+            }
+
+            for (int i = 0; i < MaxCount; i++)
+            {
+                var temp = await asyncQueue.DequeueAsync();
+            }
+        }
+
+        [Benchmark()]
+        public async Task AsyncQueueEnqueueAndDequeueTestWithMultiThread()
+        {
+            var asyncQueue = new AsyncQueue<Foo>();
+            var foo = new Foo();
             var task = Task.Run(async () =>
             {
                 int n = 0;
@@ -125,6 +142,34 @@ namespace AsyncWorkerCollection.Benchmarks
                     break;
                 }
             }
+        }
+
+        [Benchmark()]
+        public async Task ChannelReadAndWriteTestWithMultiThread()
+        {
+            var foo = new Foo();
+            var bounded = System.Threading.Channels.Channel.CreateBounded<Foo>(MaxCount);
+
+            var task = Task.Run(async () =>
+            {
+                int n = 0;
+
+                await foreach (var temp in bounded.Reader.ReadAllAsync())
+                {
+                    n++;
+                    if (n == MaxCount)
+                    {
+                        break;
+                    }
+                }
+            });
+
+            for (int i = 0; i < MaxCount; i++)
+            {
+                await bounded.Writer.WriteAsync(foo);
+            }
+
+            await task;
         }
 
         private const int MaxCount = 1000;
