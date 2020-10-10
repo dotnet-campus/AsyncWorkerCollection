@@ -15,7 +15,12 @@ namespace dotnetCampus.Threading
     /// </para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class DoubleBufferTaskDoUtilInitialized<T>
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class DoubleBufferTaskDoUtilInitialized<T>
     {
         /// <summary>
         /// 初始化可等待初始化之后才执行实际任务的双缓存工具
