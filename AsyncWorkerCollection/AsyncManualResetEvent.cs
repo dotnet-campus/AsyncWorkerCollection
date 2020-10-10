@@ -6,7 +6,12 @@ namespace dotnetCampus.Threading
     /// 异步等待的manualresetevent
     /// WaitOneAsync方法会返回一个task，通过await方式等待
     /// </summary>
-    public class AsyncManualResetEvent
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class AsyncManualResetEvent
     {
         /// <summary>
         /// 提供一个信号初始值，确定是否有信号

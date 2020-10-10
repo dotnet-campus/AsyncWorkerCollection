@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 namespace dotnetCampus.Threading
 {
     /// <summary>
-    /// 异步任务队列，这是重量级的方案，将会开启一个线程来做
+    /// 异步任务队列，将任务加入到队列里面按照顺序执行
     /// </summary>
-    public class AsyncTaskQueue : IDisposable
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class AsyncTaskQueue : IDisposable
     {
         /// <summary>
         /// 异步任务队列
@@ -26,7 +31,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         /// <typeparam name="T">返回结果类型</typeparam>
         /// <param name="func">异步操作</param>
-        /// <returns>isInvalid:异步操作是否有效(多任务时，如果设置了<see cref="AutoCancelPreviousTask"/>,只会保留最后一个任务有效)；result:异步操作结果</returns>
+        /// <returns>IsInvalid:异步操作是否有效(多任务时，如果设置了<see cref="AutoCancelPreviousTask"/>，只会保留最后一个任务有效)；Result:异步操作结果</returns>
         public async Task<(bool IsInvalid, T Result)> ExecuteAsync<T>(Func<Task<T>> func)
         {
             var task = GetExecutableTask(func);
@@ -45,6 +50,7 @@ namespace dotnetCampus.Threading
         /// <typeparam name="T"></typeparam>
         /// <param name="func"></param>
         /// <returns></returns>
+        // ReSharper disable once UnusedTypeParameter
         public async Task<bool> ExecuteAsync<T>(Func<Task> func)
         {
             var task = GetExecutableTask(func);
@@ -89,7 +95,7 @@ namespace dotnetCampus.Threading
         private void AddPendingTaskToQueue(AwaitableTask task)
         {
             //添加队列，加锁。
-            lock (_queue)
+            lock (Locker)
             {
                 _queue.Enqueue(task);
                 //开始执行任务
@@ -182,11 +188,11 @@ namespace dotnetCampus.Threading
             if (_isDisposed) return;
             if (disposing)
             {
-                //_autoResetEvent.Dispose();
             }
 
+            // 先调用 Clear 方法，然后调用  _autoResetEvent.Dispose 此时的任务如果还没执行的，就不会执行
             _queue.Clear();
-            _autoResetEvent = null;
+            _autoResetEvent.Dispose();
             _isDisposed = true;
         }
 
@@ -195,18 +201,35 @@ namespace dotnetCampus.Threading
         #region 属性及字段
 
         /// <summary>
-        /// 是否使用单线程完成任务.
+        /// 是否使用单线程完成任务
         /// </summary>
         public bool UseSingleThread { get; set; } = true;
 
         /// <summary>
-        /// 自动取消以前的任务。
+        /// 自动取消以前的任务，此属性应该是在创建对象完成之后给定，不允许在任务执行过程中更改
         /// </summary>
-        public bool AutoCancelPreviousTask { get; set; } = false;
+        /// 设置和获取不需要加上锁，因为这是原子的，业务上也不会有开发者不断修改这个值。也就是说这个属性只有在对象创建就给定
+        public bool AutoCancelPreviousTask
+        {
+            get => _autoCancelPreviousTask;
+            set
+            {
+                if (_lastDoingTask != null)
+                {
+                    // 仅用于开发时告诉开发者，在任务开始之后调用是不对的
+                    throw new InvalidOperationException($"此属性应该是在创建对象完成之后给定，不允许在任务执行过程中更改");
+                }
 
+                _autoCancelPreviousTask = value;
+            }
+        }
+
+        private object Locker => _queue;
         private bool _isDisposed;
         private readonly ConcurrentQueue<AwaitableTask> _queue = new ConcurrentQueue<AwaitableTask>();
-        private AsyncAutoResetEvent _autoResetEvent;
+        private readonly AsyncAutoResetEvent _autoResetEvent;
+        // ReSharper disable once RedundantDefaultMemberInitializer
+        private bool _autoCancelPreviousTask = false;
 
         #endregion
     }

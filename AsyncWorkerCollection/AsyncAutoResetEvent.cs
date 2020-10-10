@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +9,12 @@ namespace dotnetCampus.Threading
     /// 异步等待的autoresetevent
     /// WaitOneAsync方法会返回一个task，通过await方式等待
     /// </summary>
-    public class AsyncAutoResetEvent : IDisposable
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class AsyncAutoResetEvent : IDisposable
     {
         /// <summary>
         /// 提供一个信号初始值，确定是否有信号
@@ -19,6 +25,9 @@ namespace dotnetCampus.Threading
             _isSignaled = initialState;
         }
 
+        /// <summary>
+        /// 析构方法
+        /// </summary>
         ~AsyncAutoResetEvent()
         {
             Dispose();
@@ -63,7 +72,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Set()
         {
-            TaskCompletionSource<bool> releaseSource = null;
+            TaskCompletionSource<bool>? releaseSource = null;
             bool result;
             lock (_locker)
             {

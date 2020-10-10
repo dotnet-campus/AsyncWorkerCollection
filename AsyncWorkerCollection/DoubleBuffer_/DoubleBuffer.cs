@@ -10,7 +10,12 @@ namespace dotnetCampus.Threading
     /// <typeparam name="T">用于存放 <typeparamref name="TU"/> 的集合</typeparam>
     /// <typeparam name="TU"></typeparam>
     /// 写入的时候写入到一个列表，通过 SwitchBuffer 方法，可以切换当前缓存
-    public class DoubleBuffer<T, TU> where T : class, ICollection<TU>
+#if PublicAsInternal
+    internal
+#else
+    public
+#endif
+    class DoubleBuffer<T, TU> where T : class, ICollection<TU>
     {
         /// <summary>
         /// 创建双缓存
