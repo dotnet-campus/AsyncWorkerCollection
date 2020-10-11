@@ -20,9 +20,8 @@ Job=InProcess  Toolchain=InProcessEmitToolchain
 | AsyncQueueEnqueueAndDequeueTest | 285.4 us | 5.54 us | 6.59 us |  2.22 |    0.06 | 26.3672 | 0.4883 |     - | 104.51 KB |
 |         ChannelReadAndWriteTest | 128.4 us | 2.55 us | 2.39 us |  1.00 |    0.00 |  4.1504 |      - |     - |  17.15 KB |
 
-## Write Only
 
-### AsyncQueue
+### AsyncQueue with multi-thread
 
 |                                         Method |       Mean |    Error |   StdDev | Ratio | RatioSD |   Gen 0 |  Gen 1 | Gen 2 | Allocated |
 |----------------------------------------------- |-----------:|---------:|---------:|------:|--------:|--------:|-------:|------:|----------:|
@@ -33,8 +32,7 @@ Job=InProcess  Toolchain=InProcessEmitToolchain
 |                        ChannelReadAndWriteTest |   130.9 us |  2.55 us |  3.41 us |  1.00 |    0.00 |  4.1504 |      - |     - |  17.15 KB |
 |         ChannelReadAndWriteTestWithMultiThread |   273.9 us |  4.98 us |  4.66 us |  2.10 |    0.07 |  3.9063 |      - |     - |  17.83 KB |
 
-
-### DoubleBufferTask
+### DoubleBufferTask with multi-thread
 
 |                                      Method | threadCount |       Mean |    Error |   StdDev | Ratio | RatioSD |   Gen 0 |  Gen 1 | Gen 2 | Allocated |
 |-------------------------------------------- |------------ |-----------:|---------:|---------:|------:|--------:|--------:|-------:|------:|----------:|
@@ -55,3 +53,16 @@ Job=InProcess  Toolchain=InProcessEmitToolchain
 |------------------------------------------------ |-------------:|----------:|----------:|------:|------:|------:|------:|----------:|
 | DoubleBufferTaskReadAndWriteTestWithMultiThread |     31.50 ms |  0.597 ms |  0.587 ms | 0.002 |     - |     - |     - |  90.67 KB |
 |          ChannelReadAndWriteTestWithMultiThread | 15,791.17 ms | 43.934 ms | 41.095 ms | 1.000 |     - |     - |     - | 645.11 KB |
+
+
+
+## DoubleBuffer Add task
+
+|                                                         Method |        Mean |       Error |      StdDev |  Ratio | RatioSD |   Gen 0 |   Gen 1 |   Gen 2 | Allocated |
+|--------------------------------------------------------------- |------------:|------------:|------------:|-------:|--------:|--------:|--------:|--------:|----------:|
+|                                         AddTaskToConcurrentBag |    539.1 us |    10.09 us |     9.91 us |   1.00 |    0.00 | 54.6875 | 30.2734 | 27.3438 | 256.45 KB |
+|                          AddTaskToConcurrentBagWithMultiThread |    857.0 us |    16.84 us |    18.72 us |   1.59 |    0.05 | 35.1563 | 17.5781 |  3.9063 | 163.54 KB |
+|                            AddTaskToDoubleBufferWithLock |    259.0 us |     2.98 us |     2.64 us |   0.48 |    0.01 | 37.5977 |  9.2773 |       - | 156.45 KB |
+|                 AddTaskToDoubleBufferWithLockMultiThread |    599.9 us |     7.60 us |     6.74 us |   1.11 |    0.02 | 38.0859 |  8.7891 |       - | 159.63 KB |
+|            AddTaskToDoubleBufferWithReaderWriterLockSlim |    485.8 us |     9.63 us |     9.89 us |   0.90 |    0.02 | 37.5977 |  9.2773 |       - | 156.55 KB |
+| AddTaskToDoubleBufferWithReaderWriterLockSlimMultiThread | 62,228.6 us | 2,209.10 us | 6,513.57 us | 118.39 |   13.81 |       - |       - |       - | 160.15 KB |
