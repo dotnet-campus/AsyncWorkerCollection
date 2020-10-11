@@ -67,6 +67,10 @@ Waiting for the task to dequeue:
   var fooTask = await asyncQueue.DequeueAsync();
 ```
 
+## Benchmark
+
+See [Benchmark.md](docs/Benchmark.md)
+
 ## Contributing
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/dotnet-campus/AsyncWorkerCollection/pulls)
