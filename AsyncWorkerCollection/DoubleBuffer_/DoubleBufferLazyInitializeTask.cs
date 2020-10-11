@@ -20,15 +20,15 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class DoubleBufferTaskDoUtilInitialized<T>
+    class DoubleBufferLazyInitializeTask<T>
     {
         /// <summary>
         /// 初始化可等待初始化之后才执行实际任务的双缓存工具
         /// </summary>
-        /// <param name="doTask">只有在 <see cref="OnInitialized"/> 方法被调用之后，才会执行的实际任务</param>
-        public DoubleBufferTaskDoUtilInitialized(Func<List<T>, Task> doTask)
+        /// <param name="runTask">只有在 <see cref="OnInitialized"/> 方法被调用之后，才会执行的实际任务</param>
+        public DoubleBufferLazyInitializeTask(Func<List<T>, Task> runTask)
         {
-            _doTask = doTask;
+            _runTask = runTask;
             _doubleBufferTask = new DoubleBufferTask<T>(DoInner);
         }
 
@@ -83,7 +83,7 @@ namespace dotnetCampus.Threading
 
         private object Locker => _doubleBufferTask;
 
-        private readonly Func<List<T>, Task> _doTask;
+        private readonly Func<List<T>, Task> _runTask;
         private readonly DoubleBufferTask<T> _doubleBufferTask;
 
         private bool _isInitialized;
@@ -130,7 +130,7 @@ namespace dotnetCampus.Threading
                 _waitForInitializationTask = null;
             }
 
-            await _doTask(dataList);
+            await _runTask(dataList);
         }
     }
 }

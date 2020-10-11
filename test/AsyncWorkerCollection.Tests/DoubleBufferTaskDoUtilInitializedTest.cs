@@ -18,7 +18,7 @@ namespace AsyncWorkerCollection.Tests
                 var mock = new Mock<IWorker>();
                 mock.Setup(worker => worker.DoTask(It.IsAny<List<int>>()));
 
-                var doubleBufferTaskDoUtilInitialized = new DoubleBufferTaskDoUtilInitialized<int>(mock.Object.DoTask);
+                var doubleBufferTaskDoUtilInitialized = new DoubleBufferLazyInitializeTask<int>(mock.Object.DoTask);
                 for (int i = 0; i < 100; i++)
                 {
                     doubleBufferTaskDoUtilInitialized.AddTask(i);
@@ -50,7 +50,7 @@ namespace AsyncWorkerCollection.Tests
                 var mock = new Mock<IWorker>();
                 mock.Setup(worker => worker.DoTask(It.IsAny<List<int>>()));
 
-                var doubleBufferTaskDoUtilInitialized = new DoubleBufferTaskDoUtilInitialized<int>(mock.Object.DoTask);
+                var doubleBufferTaskDoUtilInitialized = new DoubleBufferLazyInitializeTask<int>(mock.Object.DoTask);
                 for (int i = 0; i < 100; i++)
                 {
                     doubleBufferTaskDoUtilInitialized.AddTask(i);
