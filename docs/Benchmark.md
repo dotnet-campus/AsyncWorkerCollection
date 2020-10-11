@@ -48,3 +48,10 @@ Job=InProcess  Toolchain=InProcessEmitToolchain
 | **DoubleBufferTaskWithMultiThreadReadAndWrite** |           **5** | **1,193.8 us** | **23.31 us** | **39.59 us** |     **?** |       **?** | **21.4844** |      **-** |     **-** |  **88.33 KB** |
 |                                             |             |            |          |          |       |         |         |        |       |           |
 | **DoubleBufferTaskWithMultiThreadReadAndWrite** |          **10** | **1,120.2 us** | **22.31 us** | **28.21 us** |     **?** |       **?** | **21.4844** |      **-** |     **-** |  **89.38 KB** |
+
+### DoubleBufferTask with Batch task
+
+|                                          Method |         Mean |     Error |    StdDev | Ratio | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------------------------------ |-------------:|----------:|----------:|------:|------:|------:|------:|----------:|
+| DoubleBufferTaskReadAndWriteTestWithMultiThread |     31.50 ms |  0.597 ms |  0.587 ms | 0.002 |     - |     - |     - |  90.67 KB |
+|          ChannelReadAndWriteTestWithMultiThread | 15,791.17 ms | 43.934 ms | 41.095 ms | 1.000 |     - |     - |     - | 645.11 KB |
