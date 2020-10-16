@@ -90,6 +90,65 @@ namespace AsyncWorkerCollection.Benchmarks
             await Task.WhenAll(taskList);
         }
 
+        /// <summary>
+        /// 没有给定数组的长度
+        /// </summary>
+        /// <returns></returns>
+        [Benchmark()]
+        public async Task AddTaskToDoubleBufferWithoutCapacityMultiThread()
+        {
+            var foo = new Foo();
+            var doubleBuffer = new DoubleBuffer<Foo>();
+
+            var threadCount = 10;
+
+            var taskList = new Task[threadCount];
+
+            for (int j = 0; j < threadCount; j++)
+            {
+                var task = Task.Run(() =>
+                {
+                    for (int i = 0; i < MaxCount / threadCount; i++)
+                    {
+                        doubleBuffer.Add(foo);
+                    }
+                });
+                taskList[j] = task;
+            }
+
+            await Task.WhenAll(taskList);
+        }
+
+        /// <summary>
+        /// 使用链表的双缓存
+        /// </summary>
+        /// <returns></returns>
+        [Benchmark()]
+        public async Task AddTaskToDoubleBufferWithLinkedListMultiThread()
+        {
+            var foo = new Foo();
+
+            var doubleBuffer = new DoubleBuffer<LinkedList<Foo>, Foo>(new LinkedList<Foo>(), new LinkedList<Foo>());
+
+            var threadCount = 10;
+
+            var taskList = new Task[threadCount];
+
+            for (int j = 0; j < threadCount; j++)
+            {
+                var task = Task.Run(() =>
+                {
+                    for (int i = 0; i < MaxCount / threadCount; i++)
+                    {
+                        doubleBuffer.Add(foo);
+                    }
+                });
+                taskList[j] = task;
+            }
+
+            await Task.WhenAll(taskList);
+        }
+
         [Benchmark()]
         public void AddTaskToLegacyDoubleBufferWithReaderWriterLockSlim()
         {
