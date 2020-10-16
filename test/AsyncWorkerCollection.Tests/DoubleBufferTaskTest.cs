@@ -1,4 +1,4 @@
-using System;
+锘縰sing System;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +13,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DoAll()
         {
-            "多线程加入任务，任务执行速度比加入快，可以等待所有任务执行完成".Test(() =>
+            "露脿脧脽鲁脤录脫脠毛脠脦脦帽拢卢脠脦脦帽脰麓脨脨脣脵露脠卤脠录脫脠毛驴矛拢卢驴脡脪脭碌脠麓媒脣霉脫脨脠脦脦帽脰麓脨脨脥锚鲁脡".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -51,7 +51,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n * taskArray.Length));
             });
 
-            "多线程加入任务，可以等待所有任务执行完成".Test(() =>
+            "露脿脧脽鲁脤录脫脠毛脠脦脦帽拢卢驴脡脪脭碌脠麓媒脣霉脫脨脠脦脦帽脰麓脨脨脥锚鲁脡".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -88,7 +88,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n * taskArray.Length));
             });
 
-            "没有加入任务，等待完成，可以等待完成".Test(() =>
+            "脙禄脫脨录脫脠毛脠脦脦帽拢卢碌脠麓媒脥锚鲁脡拢卢驴脡脪脭碌脠麓媒脥锚鲁脡".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -106,7 +106,7 @@ namespace AsyncWorkerCollection.Tests
 
                 doubleBufferTask.WaitAllTaskFinish().Wait();
 
-                // 没有执行一次
+                // 脙禄脫脨脰麓脨脨脪禄麓脦
                 mock.Verify(foo => foo.Foo(), Times.Never);
             });
         }

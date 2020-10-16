@@ -14,7 +14,7 @@ namespace dotnetCampus.Threading
         {
             while (queue.TryDequeue(out _))
             {
-                
+
             }
         }
     }

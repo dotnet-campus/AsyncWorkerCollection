@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +13,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DoAll()
         {
-            "���߳�����ӳ�һ�߼���Ԫ��һ��ִ�У�����ִ������Ԫ��".Test(() =>
+            "¶àÏß³ÌËæ»úÑÓ³ÙÒ»±ß¼ÓÈëÔªËØÒ»±ßÖ´ÐÐ£¬¿ÉÒÔÖ´ÐÐËùÓÐÔªËØ".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -59,7 +59,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n));
             });
 
-            "���߳�һ�߼���Ԫ��һ��ִ�У�����ִ������Ԫ��".Test(() =>
+            "¶àÏß³ÌÒ»±ß¼ÓÈëÔªËØÒ»±ßÖ´ÐÐ£¬¿ÉÒÔÖ´ÐÐËùÓÐÔªËØ".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -85,11 +85,11 @@ namespace AsyncWorkerCollection.Tests
 
                 Task.WaitAll(t1, t2);
 
-                // û��ִ��һ��
+                // Ã»ÓÐÖ´ÐÐÒ»´Î
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n * 2));
             });
 
-            "����10��Ԫ�أ�ִ�� DoAll Ԫ��ִ��10��".Test(() =>
+            "¸ø¶¨10´ÎÔªËØ£¬Ö´ÐÐ DoAll ÔªËØÖ´ÐÐ10´Î".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -105,11 +105,11 @@ namespace AsyncWorkerCollection.Tests
 
                 doubleBuffer.DoAll(list => list.ForEach(foo => foo.Foo()));
 
-                // û��ִ��һ��
+                // Ã»ÓÐÖ´ÐÐÒ»´Î
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n));
             });
 
-            "û�и����������ݣ�ִ�� DoAll ɶ������".Test(() =>
+            "Ã»ÓÐ¸ø¶¨»º´æÄÚÈÝ£¬Ö´ÐÐ DoAll É¶¶¼²»×ö".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -117,7 +117,7 @@ namespace AsyncWorkerCollection.Tests
                 var doubleBuffer = new DoubleBuffer<IFoo>();
                 doubleBuffer.DoAll(list => list.ForEach(foo => foo.Foo()));
 
-                // û��ִ��һ��
+                // Ã»ÓÐÖ´ÐÐÒ»´Î
                 mock.Verify(foo => foo.Foo(), Times.Never);
             });
         }

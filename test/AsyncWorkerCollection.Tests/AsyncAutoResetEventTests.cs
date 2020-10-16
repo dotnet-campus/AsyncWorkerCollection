@@ -1,4 +1,4 @@
-using System;
+锘縰sing System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,14 +16,14 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void WaitForSuccessOrResult()
         {
-            "当使用 Set 次数超过 WaitOneAsync 次数，多余的 Set 只被计算一次".Test(() =>
+            "碌卤脢鹿脫脙 Set 麓脦脢媒鲁卢鹿媒 WaitOneAsync 麓脦脢媒拢卢露脿脫脿碌脛 Set 脰禄卤禄录脝脣茫脪禄麓脦".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
                 var mock = new Mock<IFakeJob>();
 
                 // Action
-                // 先加入一个等待的线程，用于等待第一次的 Set 对应的等待
+                // 脧脠录脫脠毛脪禄赂枚碌脠麓媒碌脛脧脽鲁脤拢卢脫脙脫脷碌脠麓媒碌脷脪禄麓脦碌脛 Set 露脭脫娄碌脛碌脠麓媒
                 var manualResetEvent = new ManualResetEvent(false);
                 var task1 = Task.Run(async () =>
                 {
@@ -32,7 +32,7 @@ namespace AsyncWorkerCollection.Tests
                     await task;
                     mock.Object.Do();
                 });
-                // 使用 manualResetEvent 可以等待让 task1 执行到了 WaitOne 方法
+                // 脢鹿脫脙 manualResetEvent 驴脡脪脭碌脠麓媒脠脙 task1 脰麓脨脨碌陆脕脣 WaitOne 路陆路篓
                 manualResetEvent.WaitOne();
 
                 for (var i = 0; i < 5; i++)
@@ -45,7 +45,7 @@ namespace AsyncWorkerCollection.Tests
                 {
                     var task = Task.Run(async () =>
                     {
-                        Console.WriteLine("进入调用");
+                        Console.WriteLine("陆酶脠毛碌梅脫脙");
                         await asyncAutoResetEvent.WaitOneAsync();
                         mock.Object.Do();
                     });
@@ -61,7 +61,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Exactly(2));
             });
 
-            "在先设置 Set 然后再 WaitOneAsync 只有一个线程执行".Test(() =>
+            "脭脷脧脠脡猫脰脙 Set 脠禄潞贸脭脵 WaitOneAsync 脰禄脫脨脪禄赂枚脧脽鲁脤脰麓脨脨".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
@@ -87,7 +87,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Once);
             });
 
-            "使用 AsyncAutoResetEvent 设置一次 Set 对应一次 WaitOneAsync 的线程执行".Test(() =>
+            "脢鹿脫脙 AsyncAutoResetEvent 脡猫脰脙脪禄麓脦 Set 露脭脫娄脪禄麓脦 WaitOneAsync 碌脛脧脽鲁脤脰麓脨脨".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
@@ -95,7 +95,7 @@ namespace AsyncWorkerCollection.Tests
 
                 // Action
                 var taskList = new List<Task>(10);
-                // 使用 SemaphoreSlim 让测试线程全部创建
+                // 脢鹿脫脙 SemaphoreSlim 脠脙虏芒脢脭脧脽鲁脤脠芦虏驴麓麓陆篓
                 var semaphoreSlim = new SemaphoreSlim(0, 10);
                 for (var i = 0; i < 10; i++)
                 {
@@ -109,14 +109,14 @@ namespace AsyncWorkerCollection.Tests
                     taskList.Add(task);
                 }
 
-                // 等待 Task 都进入 await 方法
-                // 如果没有等待，可以都在线程创建上面，此时调用多次的 Set 只是做初始化
-                // 也就是当前没有线程等待，然后进行多次 Set 方法
+                // 碌脠麓媒 Task 露录陆酶脠毛 await 路陆路篓
+                // 脠莽鹿没脙禄脫脨碌脠麓媒拢卢驴脡脪脭露录脭脷脧脽鲁脤麓麓陆篓脡脧脙忙拢卢麓脣脢卤碌梅脫脙露脿麓脦碌脛 Set 脰禄脢脟脳枚鲁玫脢录禄炉
+                // 脪虏戮脥脢脟碌卤脟掳脙禄脫脨脧脽鲁脤碌脠麓媒拢卢脠禄潞贸陆酶脨脨露脿麓脦 Set 路陆路篓
                 for (int i = 0; i < 10; i++)
                 {
                     semaphoreSlim.Wait();
                 }
-               
+
                 for (var i = 0; i < 5; i++)
                 {
                     asyncAutoResetEvent.Set();
@@ -131,7 +131,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Exactly(5));
             });
 
-            "构造函数设置为 true 等待 WaitOneAsync 的线程会执行".Test(() =>
+            "鹿鹿脭矛潞炉脢媒脡猫脰脙脦陋 true 碌脠麓媒 WaitOneAsync 碌脛脧脽鲁脤禄谩脰麓脨脨".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(true);
@@ -150,7 +150,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Once);
             });
 
-            "构造函数设置为 false 等待 WaitOneAsync 的线程不会执行".Test(() =>
+            "鹿鹿脭矛潞炉脢媒脡猫脰脙脦陋 false 碌脠麓媒 WaitOneAsync 碌脛脧脽鲁脤虏禄禄谩脰麓脨脨".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
@@ -169,7 +169,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Never);
             });
 
-            "在 WaitOne 之前调用多次 Set 只有在调用之后让一个 WaitOne 方法继续".Test(() =>
+            "脭脷 WaitOne 脰庐脟掳碌梅脫脙露脿麓脦 Set 脰禄脫脨脭脷碌梅脫脙脰庐潞贸脠脙脪禄赂枚 WaitOne 路陆路篓录脤脨酶".Test(() =>
             {
                 using var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
                 for (int i = 0; i < 1000; i++)
@@ -189,14 +189,14 @@ namespace AsyncWorkerCollection.Tests
                     }));
                 }
 
-                // 只有一个执行
-                // 单元测试有一个坑，也就是在不同的设备上，也许有设备就是不分配线程，所以这个单元测试也许会在执行的时候，发现没有一个线程执行完成
+                // 脰禄脫脨脪禄赂枚脰麓脨脨
+                // 碌楼脭陋虏芒脢脭脫脨脪禄赂枚驴脫拢卢脪虏戮脥脢脟脭脷虏禄脥卢碌脛脡猫卤赂脡脧拢卢脪虏脨铆脫脨脡猫卤赂戮脥脢脟虏禄路脰脜盲脧脽鲁脤拢卢脣霉脪脭脮芒赂枚碌楼脭陋虏芒脢脭脪虏脨铆禄谩脭脷脰麓脨脨碌脛脢卤潞貌拢卢路垄脧脰脙禄脫脨脪禄赂枚脧脽鲁脤脰麓脨脨脥锚鲁脡
                 taskList.Add(Task.Delay(TimeSpan.FromSeconds(5)));
-                // 在上面加入一个等待 5 秒的线程，此时理论上有一个线程执行完成
+                // 脭脷脡脧脙忙录脫脠毛脪禄赂枚碌脠麓媒 5 脙毛碌脛脧脽鲁脤拢卢麓脣脢卤脌铆脗脹脡脧脫脨脪禄赂枚脧脽鲁脤脰麓脨脨脥锚鲁脡
                 Task.WaitAny(taskList.ToArray());
-                // 什么时候是 0 的值？在没有分配线程，也就是没有一个 Task.Run 进入
+                // 脢虏脙麓脢卤潞貌脢脟 0 碌脛脰碌拢驴脭脷脙禄脫脨路脰脜盲脧脽鲁脤拢卢脪虏戮脥脢脟脙禄脫脨脪禄赂枚 Task.Run 陆酶脠毛
                 Assert.AreEqual(true, count <= 1);
-                // 一定有超过 9 个线程没有执行完成
+                // 脪禄露篓脫脨鲁卢鹿媒 9 赂枚脧脽鲁脤脙禄脫脨脰麓脨脨脥锚鲁脡
                 Assert.AreEqual(true, taskList.Count(task => !task.IsCompleted) >= 9);
             });
         }
@@ -204,7 +204,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void ReleaseObject()
         {
-            "在调用释放之后，所有的等待将会被释放，同时释放的值是 false 值".Test(() =>
+            "脭脷碌梅脫脙脢脥路脜脰庐潞贸拢卢脣霉脫脨碌脛碌脠麓媒陆芦禄谩卤禄脢脥路脜拢卢脥卢脢卤脢脥路脜碌脛脰碌脢脟 false 脰碌".Test(() =>
             {
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
                 var manualResetEvent = new ManualResetEvent(false);
@@ -216,7 +216,7 @@ namespace AsyncWorkerCollection.Tests
 
                     return await t;
                 });
-                // 解决单元测试里面 Task.Run 启动太慢
+                // 陆芒戮枚碌楼脭陋虏芒脢脭脌茂脙忙 Task.Run 脝么露炉脤芦脗媒
                 manualResetEvent.WaitOne();
                 asyncAutoResetEvent.Dispose();
 

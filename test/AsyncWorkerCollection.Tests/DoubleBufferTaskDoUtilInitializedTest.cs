@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+锘縰sing System.Collections.Generic;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +13,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DoUtilInitialized()
         {
-            "在调用初始化之后，才开始执行任务".Test(async () =>
+            "脭脷碌梅脫脙鲁玫脢录禄炉脰庐潞贸拢卢虏脜驴陋脢录脰麓脨脨脠脦脦帽".Test(async () =>
             {
                 var mock = new Mock<IWorker>();
                 mock.Setup(worker => worker.DoTask(It.IsAny<List<int>>()));
@@ -39,13 +39,13 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(worker => worker.DoTask(It.IsAny<List<int>>()), Times.Never);
                 Assert.AreEqual(false, waitAllTaskFinish.IsCompleted);
 
-                // 调用初始化完成
+                // 碌梅脫脙鲁玫脢录禄炉脥锚鲁脡
                 doubleBufferTaskDoUtilInitialized.OnInitialized();
                 await waitAllTaskFinish;
                 mock.Verify(worker => worker.DoTask(It.IsAny<List<int>>()), Times.AtLeast(1));
             });
 
-            "在调用初始化之前，不会执行任何的任务".Test(async () =>
+            "脭脷碌梅脫脙鲁玫脢录禄炉脰庐脟掳拢卢虏禄禄谩脰麓脨脨脠脦潞脦碌脛脠脦脦帽".Test(async () =>
             {
                 var mock = new Mock<IWorker>();
                 mock.Setup(worker => worker.DoTask(It.IsAny<List<int>>()));
