@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +13,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DoUtilInitialized()
         {
-            "ÔÚµ÷ÓÃ³õÊ¼»¯Ö®ºó£¬²Å¿ªÊ¼Ö´ÐÐÈÎÎñ".Test(async () =>
+            "åœ¨è°ƒç”¨åˆå§‹åŒ–ä¹‹åŽï¼Œæ‰å¼€å§‹æ‰§è¡Œä»»åŠ¡".Test(async () =>
             {
                 var mock = new Mock<IWorker>();
                 mock.Setup(worker => worker.DoTask(It.IsAny<List<int>>()));
@@ -39,13 +39,13 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(worker => worker.DoTask(It.IsAny<List<int>>()), Times.Never);
                 Assert.AreEqual(false, waitAllTaskFinish.IsCompleted);
 
-                // µ÷ÓÃ³õÊ¼»¯Íê³É
+                // è°ƒç”¨åˆå§‹åŒ–å®Œæˆ
                 doubleBufferTaskDoUtilInitialized.OnInitialized();
                 await waitAllTaskFinish;
                 mock.Verify(worker => worker.DoTask(It.IsAny<List<int>>()), Times.AtLeast(1));
             });
 
-            "ÔÚµ÷ÓÃ³õÊ¼»¯Ö®Ç°£¬²»»áÖ´ÐÐÈÎºÎµÄÈÎÎñ".Test(async () =>
+            "åœ¨è°ƒç”¨åˆå§‹åŒ–ä¹‹å‰ï¼Œä¸ä¼šæ‰§è¡Œä»»ä½•çš„ä»»åŠ¡".Test(async () =>
             {
                 var mock = new Mock<IWorker>();
                 mock.Setup(worker => worker.DoTask(It.IsAny<List<int>>()));

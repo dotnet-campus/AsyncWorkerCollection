@@ -91,15 +91,15 @@ namespace dotnetCampus.Threading
 
         private async Task DoInner(List<T> dataList)
         {
-            // 根据 DoubleBufferTask 的设计，这个方法只有一个线程进入
-            FirstCheckInitialized: // 标签：第一个判断初始化方法
+// 根据 DoubleBufferTask 的设计，这个方法只有一个线程进入
+FirstCheckInitialized: // 标签：第一个判断初始化方法
             if (!_isInitialized)
             {
                 // 还没有初始化，等待一下
                 // 如果此时还没有任务可以等待，那么创建一下任务
                 lock (Locker)
                 {
-                    SecondCheckInitialized: // 标签：第二个判断初始化方法
+SecondCheckInitialized: // 标签：第二个判断初始化方法
                     if (!_isInitialized)
                     {
                         // 此时的值一定是空
