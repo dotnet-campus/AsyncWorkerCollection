@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,14 +16,14 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void WaitForSuccessOrResult()
         {
-            "µ±Ê¹ÓÃ Set ´ÎÊı³¬¹ı WaitOneAsync ´ÎÊı£¬¶àÓàµÄ Set Ö»±»¼ÆËãÒ»´Î".Test(() =>
+            "å½“ä½¿ç”¨ Set æ¬¡æ•°è¶…è¿‡ WaitOneAsync æ¬¡æ•°ï¼Œå¤šä½™çš„ Set åªè¢«è®¡ç®—ä¸€æ¬¡".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
                 var mock = new Mock<IFakeJob>();
 
                 // Action
-                // ÏÈ¼ÓÈëÒ»¸öµÈ´ıµÄÏß³Ì£¬ÓÃÓÚµÈ´ıµÚÒ»´ÎµÄ Set ¶ÔÓ¦µÄµÈ´ı
+                // å…ˆåŠ å…¥ä¸€ä¸ªç­‰å¾…çš„çº¿ç¨‹ï¼Œç”¨äºç­‰å¾…ç¬¬ä¸€æ¬¡çš„ Set å¯¹åº”çš„ç­‰å¾…
                 var manualResetEvent = new ManualResetEvent(false);
                 var task1 = Task.Run(async () =>
                 {
@@ -32,7 +32,7 @@ namespace AsyncWorkerCollection.Tests
                     await task;
                     mock.Object.Do();
                 });
-                // Ê¹ÓÃ manualResetEvent ¿ÉÒÔµÈ´ıÈÃ task1 Ö´ĞĞµ½ÁË WaitOne ·½·¨
+                // ä½¿ç”¨ manualResetEvent å¯ä»¥ç­‰å¾…è®© task1 æ‰§è¡Œåˆ°äº† WaitOne æ–¹æ³•
                 manualResetEvent.WaitOne();
 
                 for (var i = 0; i < 5; i++)
@@ -45,7 +45,7 @@ namespace AsyncWorkerCollection.Tests
                 {
                     var task = Task.Run(async () =>
                     {
-                        Console.WriteLine("½øÈëµ÷ÓÃ");
+                        Console.WriteLine("è¿›å…¥è°ƒç”¨");
                         await asyncAutoResetEvent.WaitOneAsync();
                         mock.Object.Do();
                     });
@@ -61,7 +61,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Exactly(2));
             });
 
-            "ÔÚÏÈÉèÖÃ Set È»ºóÔÙ WaitOneAsync Ö»ÓĞÒ»¸öÏß³ÌÖ´ĞĞ".Test(() =>
+            "åœ¨å…ˆè®¾ç½® Set ç„¶åå† WaitOneAsync åªæœ‰ä¸€ä¸ªçº¿ç¨‹æ‰§è¡Œ".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
@@ -87,7 +87,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Once);
             });
 
-            "Ê¹ÓÃ AsyncAutoResetEvent ÉèÖÃÒ»´Î Set ¶ÔÓ¦Ò»´Î WaitOneAsync µÄÏß³ÌÖ´ĞĞ".Test(() =>
+            "ä½¿ç”¨ AsyncAutoResetEvent è®¾ç½®ä¸€æ¬¡ Set å¯¹åº”ä¸€æ¬¡ WaitOneAsync çš„çº¿ç¨‹æ‰§è¡Œ".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
@@ -95,7 +95,7 @@ namespace AsyncWorkerCollection.Tests
 
                 // Action
                 var taskList = new List<Task>(10);
-                // Ê¹ÓÃ SemaphoreSlim ÈÃ²âÊÔÏß³ÌÈ«²¿´´½¨
+                // ä½¿ç”¨ SemaphoreSlim è®©æµ‹è¯•çº¿ç¨‹å…¨éƒ¨åˆ›å»º
                 var semaphoreSlim = new SemaphoreSlim(0, 10);
                 for (var i = 0; i < 10; i++)
                 {
@@ -109,14 +109,14 @@ namespace AsyncWorkerCollection.Tests
                     taskList.Add(task);
                 }
 
-                // µÈ´ı Task ¶¼½øÈë await ·½·¨
-                // Èç¹ûÃ»ÓĞµÈ´ı£¬¿ÉÒÔ¶¼ÔÚÏß³Ì´´½¨ÉÏÃæ£¬´ËÊ±µ÷ÓÃ¶à´ÎµÄ Set Ö»ÊÇ×ö³õÊ¼»¯
-                // Ò²¾ÍÊÇµ±Ç°Ã»ÓĞÏß³ÌµÈ´ı£¬È»ºó½øĞĞ¶à´Î Set ·½·¨
+                // ç­‰å¾… Task éƒ½è¿›å…¥ await æ–¹æ³•
+                // å¦‚æœæ²¡æœ‰ç­‰å¾…ï¼Œå¯ä»¥éƒ½åœ¨çº¿ç¨‹åˆ›å»ºä¸Šé¢ï¼Œæ­¤æ—¶è°ƒç”¨å¤šæ¬¡çš„ Set åªæ˜¯åšåˆå§‹åŒ–
+                // ä¹Ÿå°±æ˜¯å½“å‰æ²¡æœ‰çº¿ç¨‹ç­‰å¾…ï¼Œç„¶åè¿›è¡Œå¤šæ¬¡ Set æ–¹æ³•
                 for (int i = 0; i < 10; i++)
                 {
                     semaphoreSlim.Wait();
                 }
-               
+
                 for (var i = 0; i < 5; i++)
                 {
                     asyncAutoResetEvent.Set();
@@ -131,7 +131,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Exactly(5));
             });
 
-            "¹¹Ôìº¯ÊıÉèÖÃÎª true µÈ´ı WaitOneAsync µÄÏß³Ì»áÖ´ĞĞ".Test(() =>
+            "æ„é€ å‡½æ•°è®¾ç½®ä¸º true ç­‰å¾… WaitOneAsync çš„çº¿ç¨‹ä¼šæ‰§è¡Œ".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(true);
@@ -150,7 +150,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Once);
             });
 
-            "¹¹Ôìº¯ÊıÉèÖÃÎª false µÈ´ı WaitOneAsync µÄÏß³Ì²»»áÖ´ĞĞ".Test(() =>
+            "æ„é€ å‡½æ•°è®¾ç½®ä¸º false ç­‰å¾… WaitOneAsync çš„çº¿ç¨‹ä¸ä¼šæ‰§è¡Œ".Test(() =>
             {
                 // Arrange
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
@@ -169,7 +169,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(job => job.Do(), Times.Never);
             });
 
-            "ÔÚ WaitOne Ö®Ç°µ÷ÓÃ¶à´Î Set Ö»ÓĞÔÚµ÷ÓÃÖ®ºóÈÃÒ»¸ö WaitOne ·½·¨¼ÌĞø".Test(() =>
+            "åœ¨ WaitOne ä¹‹å‰è°ƒç”¨å¤šæ¬¡ Set åªæœ‰åœ¨è°ƒç”¨ä¹‹åè®©ä¸€ä¸ª WaitOne æ–¹æ³•ç»§ç»­".Test(() =>
             {
                 using var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
                 for (int i = 0; i < 1000; i++)
@@ -189,14 +189,14 @@ namespace AsyncWorkerCollection.Tests
                     }));
                 }
 
-                // Ö»ÓĞÒ»¸öÖ´ĞĞ
-                // µ¥Ôª²âÊÔÓĞÒ»¸ö¿Ó£¬Ò²¾ÍÊÇÔÚ²»Í¬µÄÉè±¸ÉÏ£¬Ò²ĞíÓĞÉè±¸¾ÍÊÇ²»·ÖÅäÏß³Ì£¬ËùÒÔÕâ¸öµ¥Ôª²âÊÔÒ²Ğí»áÔÚÖ´ĞĞµÄÊ±ºò£¬·¢ÏÖÃ»ÓĞÒ»¸öÏß³ÌÖ´ĞĞÍê³É
+                // åªæœ‰ä¸€ä¸ªæ‰§è¡Œ
+                // å•å…ƒæµ‹è¯•æœ‰ä¸€ä¸ªå‘ï¼Œä¹Ÿå°±æ˜¯åœ¨ä¸åŒçš„è®¾å¤‡ä¸Šï¼Œä¹Ÿè®¸æœ‰è®¾å¤‡å°±æ˜¯ä¸åˆ†é…çº¿ç¨‹ï¼Œæ‰€ä»¥è¿™ä¸ªå•å…ƒæµ‹è¯•ä¹Ÿè®¸ä¼šåœ¨æ‰§è¡Œçš„æ—¶å€™ï¼Œå‘ç°æ²¡æœ‰ä¸€ä¸ªçº¿ç¨‹æ‰§è¡Œå®Œæˆ
                 taskList.Add(Task.Delay(TimeSpan.FromSeconds(5)));
-                // ÔÚÉÏÃæ¼ÓÈëÒ»¸öµÈ´ı 5 ÃëµÄÏß³Ì£¬´ËÊ±ÀíÂÛÉÏÓĞÒ»¸öÏß³ÌÖ´ĞĞÍê³É
+                // åœ¨ä¸Šé¢åŠ å…¥ä¸€ä¸ªç­‰å¾… 5 ç§’çš„çº¿ç¨‹ï¼Œæ­¤æ—¶ç†è®ºä¸Šæœ‰ä¸€ä¸ªçº¿ç¨‹æ‰§è¡Œå®Œæˆ
                 Task.WaitAny(taskList.ToArray());
-                // Ê²Ã´Ê±ºòÊÇ 0 µÄÖµ£¿ÔÚÃ»ÓĞ·ÖÅäÏß³Ì£¬Ò²¾ÍÊÇÃ»ÓĞÒ»¸ö Task.Run ½øÈë
+                // ä»€ä¹ˆæ—¶å€™æ˜¯ 0 çš„å€¼ï¼Ÿåœ¨æ²¡æœ‰åˆ†é…çº¿ç¨‹ï¼Œä¹Ÿå°±æ˜¯æ²¡æœ‰ä¸€ä¸ª Task.Run è¿›å…¥
                 Assert.AreEqual(true, count <= 1);
-                // Ò»¶¨ÓĞ³¬¹ı 9 ¸öÏß³ÌÃ»ÓĞÖ´ĞĞÍê³É
+                // ä¸€å®šæœ‰è¶…è¿‡ 9 ä¸ªçº¿ç¨‹æ²¡æœ‰æ‰§è¡Œå®Œæˆ
                 Assert.AreEqual(true, taskList.Count(task => !task.IsCompleted) >= 9);
             });
         }
@@ -204,7 +204,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void ReleaseObject()
         {
-            "ÔÚµ÷ÓÃÊÍ·ÅÖ®ºó£¬ËùÓĞµÄµÈ´ı½«»á±»ÊÍ·Å£¬Í¬Ê±ÊÍ·ÅµÄÖµÊÇ false Öµ".Test(() =>
+            "åœ¨è°ƒç”¨é‡Šæ”¾ä¹‹åï¼Œæ‰€æœ‰çš„ç­‰å¾…å°†ä¼šè¢«é‡Šæ”¾ï¼ŒåŒæ—¶é‡Šæ”¾çš„å€¼æ˜¯ false å€¼".Test(() =>
             {
                 var asyncAutoResetEvent = new AsyncAutoResetEvent(false);
                 var manualResetEvent = new ManualResetEvent(false);
@@ -216,7 +216,7 @@ namespace AsyncWorkerCollection.Tests
 
                     return await t;
                 });
-                // ½â¾öµ¥Ôª²âÊÔÀïÃæ Task.Run Æô¶¯Ì«Âı
+                // è§£å†³å•å…ƒæµ‹è¯•é‡Œé¢ Task.Run å¯åŠ¨å¤ªæ…¢
                 manualResetEvent.WaitOne();
                 asyncAutoResetEvent.Dispose();
 

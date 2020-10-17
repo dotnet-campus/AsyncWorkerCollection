@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +13,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DoAll()
         {
-            "¶àÏß³Ì¼ÓÈëÈÎÎñ£¬ÈÎÎñÖ´ÐÐËÙ¶È±È¼ÓÈë¿ì£¬¿ÉÒÔµÈ´ýËùÓÐÈÎÎñÖ´ÐÐÍê³É".Test(() =>
+            "å¤šçº¿ç¨‹åŠ å…¥ä»»åŠ¡ï¼Œä»»åŠ¡æ‰§è¡Œé€Ÿåº¦æ¯”åŠ å…¥å¿«ï¼Œå¯ä»¥ç­‰å¾…æ‰€æœ‰ä»»åŠ¡æ‰§è¡Œå®Œæˆ".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -51,7 +51,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n * taskArray.Length));
             });
 
-            "¶àÏß³Ì¼ÓÈëÈÎÎñ£¬¿ÉÒÔµÈ´ýËùÓÐÈÎÎñÖ´ÐÐÍê³É".Test(() =>
+            "å¤šçº¿ç¨‹åŠ å…¥ä»»åŠ¡ï¼Œå¯ä»¥ç­‰å¾…æ‰€æœ‰ä»»åŠ¡æ‰§è¡Œå®Œæˆ".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -88,7 +88,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n * taskArray.Length));
             });
 
-            "Ã»ÓÐ¼ÓÈëÈÎÎñ£¬µÈ´ýÍê³É£¬¿ÉÒÔµÈ´ýÍê³É".Test(() =>
+            "æ²¡æœ‰åŠ å…¥ä»»åŠ¡ï¼Œç­‰å¾…å®Œæˆï¼Œå¯ä»¥ç­‰å¾…å®Œæˆ".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -106,7 +106,7 @@ namespace AsyncWorkerCollection.Tests
 
                 doubleBufferTask.WaitAllTaskFinish().Wait();
 
-                // Ã»ÓÐÖ´ÐÐÒ»´Î
+                // æ²¡æœ‰æ‰§è¡Œä¸€æ¬¡
                 mock.Verify(foo => foo.Foo(), Times.Never);
             });
         }
