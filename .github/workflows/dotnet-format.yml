@@ -19,7 +19,7 @@ jobs:
         run: dotnet tool update -g dotnetCampus.EncodingNormalior
 
       - name: Fix encoding
-        run: EncodingNormalior -f .
+        run: EncodingNormalior -f . --TryFix true
 
       - name: Install dotnet-format
         run: dotnet tool install -g dotnet-format
