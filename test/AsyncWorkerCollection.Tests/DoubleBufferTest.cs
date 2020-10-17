@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +13,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DoAll()
         {
-            "¶àÏß³ÌËæ»úÑÓ³ÙÒ»±ß¼ÓÈëÔªËØÒ»±ßÖ´ÐÐ£¬¿ÉÒÔÖ´ÐÐËùÓÐÔªËØ".Test(() =>
+            "å¤šçº¿ç¨‹éšæœºå»¶è¿Ÿä¸€è¾¹åŠ å…¥å…ƒç´ ä¸€è¾¹æ‰§è¡Œï¼Œå¯ä»¥æ‰§è¡Œæ‰€æœ‰å…ƒç´ ".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -59,7 +59,7 @@ namespace AsyncWorkerCollection.Tests
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n));
             });
 
-            "¶àÏß³ÌÒ»±ß¼ÓÈëÔªËØÒ»±ßÖ´ÐÐ£¬¿ÉÒÔÖ´ÐÐËùÓÐÔªËØ".Test(() =>
+            "å¤šçº¿ç¨‹ä¸€è¾¹åŠ å…¥å…ƒç´ ä¸€è¾¹æ‰§è¡Œï¼Œå¯ä»¥æ‰§è¡Œæ‰€æœ‰å…ƒç´ ".Test(() =>
             {
                 var mock = new Mock<IFoo>();
                 mock.Setup(foo => foo.Foo());
@@ -85,46 +85,19 @@ namespace AsyncWorkerCollection.Tests
 
                 Task.WaitAll(t1, t2);
 
-                // Ã»ÓÐÖ´ÐÐÒ»´Î
+                // æ²¡æœ‰æ‰§è¡Œä¸€æ¬¡
                 mock.Verify(foo => foo.Foo(), Times.Exactly(n * 2));
             });
 
-            "¸ø¶¨10´ÎÔªËØ£¬Ö´ÐÐ DoAll ÔªËØÖ´ÐÐ10´Î".Test(() =>
+            "ç»™å®š10æ¬¡å…ƒç´ ï¼Œæ‰§è¡Œ DoAll å…ƒç´ æ‰§è¡Œ10æ¬¡".Test(() =>
             {
-                var mock = new Mock<IFoo>();
-                mock.Setup(foo => foo.Foo());
+            var mock = new Mock<IFoo>();
+            mock.Setup(foo => foo.Foo());
 
-                const int n = 10;
+            const int n = 10;
 
-                var doubleBuffer = new DoubleBuffer<IFoo>();
+            var doubleBuffer = new DoubleBuffer<IFoo>();
 
-                for (int i = 0; i < n; i++)
-                {
-                    doubleBuffer.Add(mock.Object);
-                }
-
-                doubleBuffer.DoAll(list => list.ForEach(foo => foo.Foo()));
-
-                // Ã»ÓÐÖ´ÐÐÒ»´Î
-                mock.Verify(foo => foo.Foo(), Times.Exactly(n));
-            });
-
-            "Ã»ÓÐ¸ø¶¨»º´æÄÚÈÝ£¬Ö´ÐÐ DoAll É¶¶¼²»×ö".Test(() =>
+            for (int i = 0; i < n; i++)
             {
-                var mock = new Mock<IFoo>();
-                mock.Setup(foo => foo.Foo());
-
-                var doubleBuffer = new DoubleBuffer<IFoo>();
-                doubleBuffer.DoAll(list => list.ForEach(foo => foo.Foo()));
-
-                // Ã»ÓÐÖ´ÐÐÒ»´Î
-                mock.Verify(foo => foo.Foo(), Times.Never);
-            });
-        }
-
-        public interface IFoo
-        {
-            void Foo();
-        }
-    }
-}
+             

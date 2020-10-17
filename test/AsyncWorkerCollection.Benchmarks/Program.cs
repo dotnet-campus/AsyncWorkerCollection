@@ -15,7 +15,7 @@ namespace AsyncWorkerCollection.Benchmarks
         {
             var switcher = new BenchmarkSwitcher(typeof(Program).Assembly);
             var config = GetConfig(args);
-            switcher.Run(new[] {"--filter", "*"}, config);
+            switcher.Run(new[] { "--filter", "*" }, config);
         }
 
         private static IConfig GetConfig(string[] args)
