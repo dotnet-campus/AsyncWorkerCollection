@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-#if NETFRAMEWORK
+#if !NETCOREAPP
 using ValueTask = System.Threading.Tasks.Task;
 #endif
 
