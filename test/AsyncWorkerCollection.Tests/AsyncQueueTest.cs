@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
@@ -13,6 +14,31 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DisposeTest()
         {
+            "调用 AsyncQueue 销毁方法，有 10 个线程在等待出队，将会释放当前所有在等待出队的任务".Test(async () =>
+            {
+                // Arrange
+                var asyncQueue = new AsyncQueue<int>();
+                const int count = 10;
+                var taskList = new Task[count];
+                for (int i = 0; i < count; i++)
+                {
+                    var task = asyncQueue.DequeueAsync();
+                    taskList[i] = task;
+                }
+
+                // Action
+                asyncQueue.Dispose();
+
+                // 等待一下 DequeueAsync 逻辑的完成
+                await Task.WhenAny(Task.WhenAll(taskList), Task.Delay(TimeSpan.FromSeconds(1)));
+
+                // Assert
+                foreach (var task in taskList)
+                {
+                    Assert.AreEqual(true, task.IsCompleted);
+                }
+            });
+
             "调用 AsyncQueue 销毁方法，有一个线程在等待出队，将会释放当前在等待出队的任务".Test(async () =>
             {
                 // Arrange
