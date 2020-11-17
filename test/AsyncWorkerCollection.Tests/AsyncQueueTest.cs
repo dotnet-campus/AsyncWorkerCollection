@@ -11,7 +11,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DisposeTest()
         {
-            "在进行销毁之前，存在元素没有出队，可以成功销毁".Test(() =>
+            "在 AsyncQueue 进行销毁之前，存在元素没有出队，调用销毁时可以成功销毁".Test(() =>
             {
                 // Arrange
                 var asyncQueue = new AsyncQueue<int>();
