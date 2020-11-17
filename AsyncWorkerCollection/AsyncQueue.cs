@@ -78,27 +78,40 @@ namespace dotnetCampus.Threading
         /// <returns>可以异步等待的队列返回的元素。</returns>
         public async Task<T> DequeueAsync(CancellationToken cancellationToken = default)
         {
-            while (!_isDisposed)
+            Interlocked.Increment(ref _dequeueAsyncEnterCount);
+            try
             {
-                await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                while (!_isDisposed)
+                {
+                    await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-                if (_queue.TryDequeue(out var item))
-                {
-                    return item;
-                }
-                else
-                {
-                    // 当前没有任务
-                    lock (_queue)
+                    if (_queue.TryDequeue(out var item))
                     {
-                        // 事件不是线程安全，因为存在事件的加等
-                        CurrentFinished?.Invoke(this, EventArgs.Empty);
+                        return item;
+                    }
+                    else
+                    {
+                        // 当前没有任务
+                        lock (_queue)
+                        {
+                            // 事件不是线程安全，因为存在事件的加等
+                            CurrentFinished?.Invoke(this, EventArgs.Empty);
+                        }
                     }
                 }
-            }
 
-            return default!;
+                return default!;
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _dequeueAsyncEnterCount);
+            }
         }
+
+        /// <summary>
+        /// 当前进入 <see cref="DequeueAsync"/> 还没被释放的次数
+        /// </summary>
+        private int _dequeueAsyncEnterCount;
 
         /// <summary>
         /// 等待当前的所有任务执行完成
@@ -130,14 +143,18 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Dispose()
         {
+            ThrowIfDisposing();
             _isDisposing = true;
 
             // 当释放的时候，将通过 _queue 的 Clear 清空内容，而通过 _semaphoreSlim 的释放让 DequeueAsync 释放锁
             // 此时将会在 DequeueAsync 进入 TryDequeue 方法，也许此时依然有开发者在 _queue.Clear() 之后插入元素，但是没关系，我只是需要保证调用 Dispose 之后会让 DequeueAsync 方法返回而已
             _isDisposed = true;
             _queue.Clear();
-            // 释放 DequeueAsync 方法
-            _semaphoreSlim.Release(int.MaxValue);
+            if (_dequeueAsyncEnterCount > 0)
+            {
+                // 释放 DequeueAsync 方法，释放次数为 DequeueAsync 在调用的次数
+                _semaphoreSlim.Release(_dequeueAsyncEnterCount);
+            }
             _semaphoreSlim.Dispose();
         }
 
@@ -149,6 +166,7 @@ namespace dotnetCampus.Threading
         /// <returns></returns>
         public async ValueTask DisposeAsync()
         {
+            ThrowIfDisposing();
             _isDisposing = true;
             await WaitForCurrentFinished();
 
