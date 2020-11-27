@@ -67,6 +67,43 @@ Waiting for the task to dequeue:
   var fooTask = await asyncQueue.DequeueAsync();
 ```
 
+The advantage of AsyncQueue over Channel is that it supports .NET Framework 45 and simple
+
+### DoubleBufferTask
+
+DoubleBufferTask supports multi-threaded fast input data and single-threaded batch processing of data, and supports waiting for buffer execution to complete
+
+```csharp
+var doubleBufferTask = new DoubleBufferTask<Foo>(list =>
+{
+    // Method to perform batch List<Foo> tasks
+    // The incoming delegate will be called when there is data in the DoubleBufferTask, and it means that there is at least one element in the list
+});
+
+// Multiple other threads call this code to add the task data
+doubleBufferTask.AddTask(new Foo());
+
+// After the business code is completed, call the Finish method to indicate that no more tasks are added
+// This Finish method is not thread-safe
+doubleBufferTask.Finish();
+
+// Other threads can call WaitAllTaskFinish to wait for the completion of all task data in DoubleBufferTask
+// It will return after be Finish method be called and the all the task data be handled
+await doubleBufferTask.WaitAllTaskFinish();
+```
+
+### AsyncAutoResetEvent
+
+Asynchronous version of AutoResetEvent lock
+
+AsyncAutoResetEvent is functionally the same as AutoResetEvent, except that WaitOne is replaced with WaitOneAsync to support asynchronous waiting
+
+### AsyncManualResetEvent
+
+Asynchronous version of ManualResetEvent lock
+
+AsyncManualResetEvent is functionally the same as ManualResetEvent, except that WaitOne is replaced with WaitOneAsync to support asynchronous waiting
+
 ## Benchmark
 
 See [Benchmark.md](docs/Benchmark.md)
