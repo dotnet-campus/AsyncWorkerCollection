@@ -38,6 +38,8 @@ PackageReference:
 </PackageReference>
 ```
 
+安装源代码包将会让你的项目引用的是 dotnetCampus.AsyncWorkerCollection 的 C# 源代码，而不是 dll 程序集。使用此方法可以减少 dll 文件以及程序集的引入
+
 ## 使用方法
 
 ### AsyncQueue
