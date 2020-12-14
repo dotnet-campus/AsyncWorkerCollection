@@ -91,7 +91,7 @@ namespace dotnetCampus.Threading
                 var buffer = SwitchBuffer();
                 if (buffer.Count == 0) break;
 
-                await action(buffer);
+                await action(buffer).ConfigureAwait(false);
                 buffer.Clear();
             }
         }

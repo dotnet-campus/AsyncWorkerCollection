@@ -110,7 +110,7 @@ SecondCheckInitialized: // 标签：第二个判断初始化方法
 
                 if (!_isInitialized)
                 {
-                    await _waitForInitializationTask!.Task;
+                    await _waitForInitializationTask!.Task.ConfigureAwait(false);
                 }
                 else
                 {
@@ -130,7 +130,7 @@ SecondCheckInitialized: // 标签：第二个判断初始化方法
                 _waitForInitializationTask = null;
             }
 
-            await _runTask(dataList);
+            await _runTask(dataList).ConfigureAwait(false);
         }
     }
 }
