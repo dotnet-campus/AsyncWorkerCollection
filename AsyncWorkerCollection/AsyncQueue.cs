@@ -133,7 +133,7 @@ namespace dotnetCampus.Threading
                 return;
             }
 
-            await currentFinishedTask.WaitForCurrentFinished();
+            await currentFinishedTask.WaitForCurrentFinished().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -168,13 +168,13 @@ namespace dotnetCampus.Threading
         {
             ThrowIfDisposing();
             _isDisposing = true;
-            await WaitForCurrentFinished();
+            await WaitForCurrentFinished().ConfigureAwait(false);
 
             // 在设置 _isDisposing 完成，刚好有 Enqueue 的代码
             if (_queue.Count != 0)
             {
                 // 再次等待
-                await WaitForCurrentFinished();
+                await WaitForCurrentFinished().ConfigureAwait(false);
             }
 
             // 其实此时依然可以存在有线程在 Enqueue 执行，但是此时就忽略了
@@ -218,7 +218,7 @@ namespace dotnetCampus.Threading
 
             public async ValueTask WaitForCurrentFinished()
             {
-                await _currentFinishedTaskCompletionSource.Task;
+                await _currentFinishedTaskCompletionSource.Task.ConfigureAwait(false);
             }
 
             private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource =

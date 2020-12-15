@@ -27,6 +27,9 @@ namespace dotnetCampus.Threading
         /// 执行任务的方法
         /// <para></para>
         /// 传入的 List&lt;T&gt; 就是需要执行的任务，请不要将传入的 List&lt;T&gt; 保存到本地字段
+        /// <para>
+        /// 此委托需要自行完全处理异常，否则将会抛到后台线程
+        /// </para>
         /// </param>
         /// <param name="aList"></param>
         /// <param name="bList"></param>
@@ -58,7 +61,7 @@ namespace dotnetCampus.Threading
                 _isDoing = true;
             }
 
-            await DoubleBuffer.DoAllAsync(_doTask);
+            await DoubleBuffer.DoAllAsync(_doTask).ConfigureAwait(false);
 
             lock (DoubleBuffer)
             {
@@ -107,7 +110,7 @@ namespace dotnetCampus.Threading
         public async ValueTask DisposeAsync()
         {
             Finish();
-            await WaitAllTaskFinish();
+            await WaitAllTaskFinish().ConfigureAwait(false);
         }
     }
 }

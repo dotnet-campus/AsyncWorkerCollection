@@ -80,7 +80,7 @@ namespace dotnetCampus.Threading
         {
             // ReSharper disable once MethodHasAsyncOverload
             Add(task);
-            await WaitForFree();
+            await WaitForFree().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace dotnetCampus.Threading
                 return;
             }
 
-            await WaitForFreeTask.Task;
+            await WaitForFreeTask.Task.ConfigureAwait(false);
         }
 
         private TaskCompletionSource<bool>? RunningBreakTask
@@ -177,7 +177,7 @@ namespace dotnetCampus.Threading
             while (runningTaskList.Count > 0)
             {
                 // 加入等待
-                await Task.WhenAny(runningTaskList);
+                await Task.WhenAny(runningTaskList).ConfigureAwait(false);
 
                 // 干掉不需要的任务
                 runningTaskList.RemoveAll(task => task.IsCompleted);

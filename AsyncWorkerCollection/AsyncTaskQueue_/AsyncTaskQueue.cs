@@ -114,7 +114,7 @@ namespace dotnetCampus.Threading
                 if (_queue.Count == 0)
                 {
                     //等待后续任务
-                    await _autoResetEvent.WaitOneAsync();
+                    await _autoResetEvent.WaitOneAsync().ConfigureAwait(false);
                 }
 
                 while (TryGetNextTask(out var task))
