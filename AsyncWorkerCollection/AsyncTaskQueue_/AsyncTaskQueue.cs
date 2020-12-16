@@ -109,7 +109,7 @@ namespace dotnetCampus.Threading
 
         private async void InternalRunning()
         {
-            while (!_isDisposed)
+            while (!_isDisposing)
             {
                 if (_queue.Count == 0)
                 {
@@ -122,7 +122,7 @@ namespace dotnetCampus.Threading
                     //如已从队列中删除
                     if (!task.Executable) continue;
                     //添加是否已释放的判断
-                    if (!_isDisposed)
+                    if (!_isDisposing)
                     {
                         if (UseSingleThread)
                         {
@@ -186,6 +186,7 @@ namespace dotnetCampus.Threading
         private void Dispose(bool disposing)
         {
             if (_isDisposed) return;
+            _isDisposing = true;
             if (disposing)
             {
             }
@@ -226,6 +227,7 @@ namespace dotnetCampus.Threading
 
         private object Locker => _queue;
         private bool _isDisposed;
+        private bool _isDisposing;
         private readonly ConcurrentQueue<AwaitableTask> _queue = new ConcurrentQueue<AwaitableTask>();
         private readonly AsyncAutoResetEvent _autoResetEvent;
         // ReSharper disable once RedundantDefaultMemberInitializer
