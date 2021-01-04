@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release -f netcoreapp3.1
     - name: Test with dotnet
       run: dotnet test --configuration Release  --no-build
 
@@ -33,6 +33,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release -f netcoreapp3.1
     - name: Test with dotnet
       run: dotnet test --configuration Release  --no-build
