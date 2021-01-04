@@ -24,7 +24,7 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release -f netcoreapp3.1
     - name: Test with dotnet
-      run: dotnet test --configuration Release  --no-build
+      run: dotnet test --configuration Release  --no-build -f netcoreapp3.1
 
   TestOnMac:
 
@@ -35,4 +35,4 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release -f netcoreapp3.1
     - name: Test with dotnet
-      run: dotnet test --configuration Release  --no-build
+      run: dotnet test --configuration Release  --no-build -f netcoreapp3.1
