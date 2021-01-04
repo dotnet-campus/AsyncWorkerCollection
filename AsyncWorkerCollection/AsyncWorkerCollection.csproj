@@ -13,7 +13,7 @@
         <Compile Remove="ConcurrentQueueExtension.cs" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19359-alpha">
+        <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19369-alpha">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
