@@ -14,3 +14,25 @@ jobs:
       run: dotnet build --configuration Release
     - name: Test with dotnet
       run: dotnet test --configuration Release
+
+  TestOnLinux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build with dotnet
+      run: dotnet build --configuration Release -f netcoreapp3.1
+    - name: Test with dotnet
+      run: dotnet test --configuration Release  --no-build -f netcoreapp3.1
+
+  TestOnMac:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build with dotnet
+      run: dotnet build --configuration Release -f netcoreapp3.1
+    - name: Test with dotnet
+      run: dotnet test --configuration Release  --no-build -f netcoreapp3.1
