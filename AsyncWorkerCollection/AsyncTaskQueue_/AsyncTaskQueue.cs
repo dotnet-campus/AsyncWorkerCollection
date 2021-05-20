@@ -111,10 +111,28 @@ namespace dotnetCampus.Threading
         {
             while (!_isDisposing)
             {
-                if (_queue.Count == 0)
+                Task<bool> waitOneTask = null;
+                bool shouldWaitOneTask = _queue.Count == 0;
+
+                lock (Locker)
+                {
+                    if (_isDisposed)
+                    {
+                        Debug.Assert(_isDisposing);
+                        return;
+                    }
+
+                    // 在锁里获取异步锁，这样可以解决在释放的时候，调用异步锁已被释放
+                    if (shouldWaitOneTask)
+                    {
+                        waitOneTask = _autoResetEvent.WaitOneAsync();
+                    }
+                }
+
+                if (shouldWaitOneTask)
                 {
                     //等待后续任务
-                    await _autoResetEvent.WaitOneAsync().ConfigureAwait(false);
+                    await waitOneTask.ConfigureAwait(false);
                 }
 
                 while (TryGetNextTask(out var task))
@@ -186,15 +204,20 @@ namespace dotnetCampus.Threading
         private void Dispose(bool disposing)
         {
             if (_isDisposed) return;
-            _isDisposing = true;
-            if (disposing)
-            {
-            }
 
-            // 先调用 Clear 方法，然后调用  _autoResetEvent.Dispose 此时的任务如果还没执行的，就不会执行
-            _queue.Clear();
-            _autoResetEvent.Dispose();
-            _isDisposed = true;
+            lock (Locker)
+            {
+                if (_isDisposed) return;
+                _isDisposing = true;
+                if (disposing)
+                {
+                }
+
+                // 先调用 Clear 方法，然后调用  _autoResetEvent.Dispose 此时的任务如果还没执行的，就不会执行
+                _queue.Clear();
+                _autoResetEvent.Dispose();
+                _isDisposed = true;
+            }
         }
 
         #endregion
