@@ -1,0 +1,23 @@
+name: Stryker
+
+on: 
+  push:
+    branches: 
+      - master
+
+jobs:
+  Stryker:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Stryker
+        run: dotnet tool install -g dotnet-stryker
+
+      - name: Test
+        run: |
+          cd test\AsyncWorkerCollection.Tests
+          dotnet stryker -p="AsyncWorkerCollection.csproj" --log-file  -r "['html', 'progress']"
