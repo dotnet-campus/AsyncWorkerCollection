@@ -97,6 +97,12 @@ namespace dotnetCampus.Threading
             //添加队列，加锁。
             lock (Locker)
             {
+                if (_isDisposing || _isDisposed)
+                {
+                    task.SetNotExecutable();
+                    return;
+                }
+
                 _queue.Enqueue(task);
                 //开始执行任务
                 _autoResetEvent.Set();
