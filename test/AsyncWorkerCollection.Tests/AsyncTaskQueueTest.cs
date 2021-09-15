@@ -13,7 +13,7 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void DisposeTest()
         {
-            "在执行任务时先加入新的任务再调用释放，可以成功释放".Test(async () =>
+            "在执行任务时先加入新的任务再调用清理，可以成功清理".Test(async () =>
             {
                 AsyncTaskQueue asyncTaskQueue =
                     new AsyncTaskQueue() { AutoCancelPreviousTask = true, UseSingleThread = true };
@@ -29,19 +29,19 @@ namespace AsyncWorkerCollection.Tests
 
                 var result = await task;
                 // 没有抛出异常就是符合预期
-                // 因为在释放的时候清空队列，因此第一个任务能成功
+                // 因为在清理的时候清空队列，因此第一个任务能成功
                 Assert.AreEqual(true, result.IsInvalid);
                 Assert.AreEqual(1, result.Result);
             });
 
-            "在执行任务时先调用释放再加入新的任务，可以成功释放".Test(async () =>
+            "在执行任务时先调用清理再加入新的任务，可以成功清理".Test(async () =>
             {
                 AsyncTaskQueue asyncTaskQueue =
                     new AsyncTaskQueue() {AutoCancelPreviousTask = true, UseSingleThread = true};
 
                 var task = asyncTaskQueue.ExecuteAsync(() =>
                 {
-                    // 先释放再加入任务
+                    // 先清理再加入任务
                     asyncTaskQueue.Dispose();
                     _ = asyncTaskQueue.ExecuteAsync<bool>((Func<Task>) (() => Task.CompletedTask));
 
@@ -50,12 +50,12 @@ namespace AsyncWorkerCollection.Tests
 
                 var result = await task;
                 // 没有抛出异常就是符合预期
-                // 被释放之后加入的任务将啥都不做，因此第一个任务可以成功
+                // 被清理之后加入的任务将啥都不做，因此第一个任务可以成功
                 Assert.AreEqual(true, result.IsInvalid);
                 Assert.AreEqual(1, result.Result);
             });
 
-            "在执行任务时，调用释放 AsyncTaskQueue 的逻辑，可以成功释放".Test(async () =>
+            "在执行任务时，调用清理 AsyncTaskQueue 的逻辑，可以成功清理".Test(async () =>
             {
                 AsyncTaskQueue asyncTaskQueue = new AsyncTaskQueue() { AutoCancelPreviousTask = true, UseSingleThread = true };
 
@@ -84,7 +84,7 @@ namespace AsyncWorkerCollection.Tests
                 Assert.AreEqual(false, result.IsInvalid);
             });
 
-            "连续开始任务的时候，无法立刻释放".Test(async () =>
+            "连续开始任务的时候，无法立刻清理".Test(async () =>
             {
                 AsyncTaskQueue asyncTaskQueue = new AsyncTaskQueue() { AutoCancelPreviousTask = true, UseSingleThread = true };
 
