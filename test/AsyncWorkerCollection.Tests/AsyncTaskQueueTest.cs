@@ -37,7 +37,7 @@ namespace AsyncWorkerCollection.Tests
             "在执行任务时先调用清理再加入新的任务，可以成功清理".Test(async () =>
             {
                 AsyncTaskQueue asyncTaskQueue =
-                    new AsyncTaskQueue() {AutoCancelPreviousTask = true, UseSingleThread = true};
+                    new AsyncTaskQueue() { AutoCancelPreviousTask = true, UseSingleThread = true };
 
                 var task = asyncTaskQueue.ExecuteAsync(() =>
                 {
@@ -106,7 +106,7 @@ namespace AsyncWorkerCollection.Tests
 
                 for (int i = 0; i < 10; i++)
                 {
-                   _ = asyncTaskQueue.ExecuteAsync<bool>((Func<Task>)(() => Task.CompletedTask));
+                    _ = asyncTaskQueue.ExecuteAsync<bool>((Func<Task>) (() => Task.CompletedTask));
                 }
 
                 await Task.Delay(1000);
