@@ -45,16 +45,16 @@ namespace dotnetCampus.Threading
         /// <param name="t"></param>
         public void AddTask(TU t)
         {
-            //B
             DoubleBuffer.Add(t);
             DoInner();
         }
 
         private async void DoInner()
         {
+            // ReSharper disable once InconsistentlySynchronizedField
             if (_isDoing) return;
 
-            lock (DoubleBuffer) 
+            lock (Locker) 
             {
                 if (_isDoing) return;
                 _isDoing = true;
@@ -64,11 +64,10 @@ namespace dotnetCampus.Threading
             {
                 await DoubleBuffer.DoAllAsync(_doTask).ConfigureAwait(false);
 
-                lock (DoubleBuffer)
+                lock (Locker)
                 {
                     if (DoubleBuffer.GetIsEmpty())
                     {
-                        // A
                         _isDoing = false;
                         Finished?.Invoke(this, EventArgs.Empty);
                         break;
@@ -82,7 +81,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Finish()
         {
-            lock (DoubleBuffer)
+            lock (Locker)
             {
                 if (!_isDoing)
                 {
@@ -112,6 +111,7 @@ namespace dotnetCampus.Threading
         private readonly Func<T, Task> _doTask;
 
         private DoubleBuffer<T, TU> DoubleBuffer { get; }
+        private object Locker => DoubleBuffer.SyncObject;
 
         /// <inheritdoc />
         public async ValueTask DisposeAsync()
