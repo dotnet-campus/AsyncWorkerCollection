@@ -96,6 +96,15 @@ namespace dotnetCampus.Threading
             }
         }
 
+        internal bool GetIsEmpty()
+        {
+            lock (_lock)
+            {
+                return AList.Count == 0 && BList.Count == 0;
+            }
+        }
+
+
         private readonly object _lock = new object();
 
         private T CurrentList { set; get; }

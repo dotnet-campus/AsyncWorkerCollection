@@ -52,21 +52,27 @@ namespace dotnetCampus.Threading
 
         private async void DoInner()
         {
-            // ReSharper disable once InconsistentlySynchronizedField
             if (_isDoing) return;
 
-            lock (DoubleBuffer)
+            lock (DoubleBuffer) 
             {
                 if (_isDoing) return;
                 _isDoing = true;
             }
 
-            await DoubleBuffer.DoAllAsync(_doTask).ConfigureAwait(false);
-
-            lock (DoubleBuffer)
+            while (true)
             {
-                _isDoing = false;
-                Finished?.Invoke(this, EventArgs.Empty);
+                await DoubleBuffer.DoAllAsync(_doTask).ConfigureAwait(false);
+
+                lock (DoubleBuffer)
+                {
+                    if (DoubleBuffer.GetIsEmpty())
+                    {
+                        _isDoing = false;
+                        Finished?.Invoke(this, EventArgs.Empty);
+                        break;
+                    }
+                }
             }
         }
 
@@ -98,7 +104,7 @@ namespace dotnetCampus.Threading
 
         private TaskCompletionSource<bool> FinishTask { get; } = new TaskCompletionSource<bool>();
 
-        private bool _isDoing;
+        private volatile bool _isDoing;
 
         private event EventHandler? Finished;
 
