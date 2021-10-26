@@ -96,6 +96,10 @@ namespace dotnetCampus.Threading
             }
         }
 
+        /// <summary>
+        /// 获取当前是否为空，获取的一瞬间是安全的
+        /// </summary>
+        /// <returns></returns>
         internal bool GetIsEmpty()
         {
             lock (_lock)
