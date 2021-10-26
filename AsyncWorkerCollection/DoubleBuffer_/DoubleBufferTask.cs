@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 #if !NETCOREAPP
@@ -45,13 +46,30 @@ namespace dotnetCampus.Threading
         /// <param name="t"></param>
         public void AddTask(TU t)
         {
-            //B
+           var currentCount = Interlocked.Increment(ref _doingTaskCount);
+
             DoubleBuffer.Add(t);
-            DoInner();
+
+            if (currentCount == 1)
+            {
+                DoInner();
+            }
         }
+
+        /// <summary>
+        /// 当前正在排队执行的任务数量
+        /// </summary>
+        /// @太子：用 int 就足够了，没有那么多内存可以用到 long 那么多
+        private int _doingTaskCount;
 
         private async void DoInner()
         {
+            await DoubleBuffer.DoAllAsync(t =>
+            {
+                Interlocked.Add(ref _doingTaskCount, -t.Count);
+                return _doTask(t);
+            }).ConfigureAwait(false);
+
             if (_isDoing) return;
 
             lock (DoubleBuffer) 
@@ -62,7 +80,7 @@ namespace dotnetCampus.Threading
 
             while (true)
             {
-                await DoubleBuffer.DoAllAsync(_doTask).ConfigureAwait(false);
+                
 
                 lock (DoubleBuffer)
                 {

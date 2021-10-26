@@ -84,7 +84,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         /// <param name="action">当前缓存里面存在的任务，请不要保存传入的 List 参数</param>
         /// <returns></returns>
-        public async Task DoAllAsync(Func<T, Task> action)
+        public async Task DoAllAsync( Func<T, Task> action)
         {
             while (true)
             {
