@@ -54,7 +54,7 @@ namespace dotnetCampus.Threading
             // ReSharper disable once InconsistentlySynchronizedField
             if (_isDoing) return;
 
-            lock (Locker) 
+            lock (Locker)
             {
                 if (_isDoing) return;
                 _isDoing = true;
