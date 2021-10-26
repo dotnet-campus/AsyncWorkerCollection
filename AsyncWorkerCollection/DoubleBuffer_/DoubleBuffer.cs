@@ -96,6 +96,19 @@ namespace dotnetCampus.Threading
             }
         }
 
+        /// <summary>
+        /// 获取当前是否为空，线程不安全，必须自行加锁
+        /// </summary>
+        /// <returns></returns>
+        internal bool GetIsEmpty()
+        {
+            return AList.Count == 0 && BList.Count == 0;
+        }
+
+        /// <summary>
+        /// 用于给其他类型的同步使用的对象
+        /// </summary>
+        internal object SyncObject => _lock;
         private readonly object _lock = new object();
 
         private T CurrentList { set; get; }
