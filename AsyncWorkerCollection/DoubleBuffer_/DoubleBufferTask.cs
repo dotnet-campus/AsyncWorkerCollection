@@ -45,8 +45,8 @@ namespace dotnetCampus.Threading
         /// <param name="t"></param>
         public void AddTask(TU t)
         {
+            //B
             DoubleBuffer.Add(t);
-
             DoInner();
         }
 
@@ -68,6 +68,7 @@ namespace dotnetCampus.Threading
                 {
                     if (DoubleBuffer.GetIsEmpty())
                     {
+                        // A
                         _isDoing = false;
                         Finished?.Invoke(this, EventArgs.Empty);
                         break;
