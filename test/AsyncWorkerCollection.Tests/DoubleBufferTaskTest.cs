@@ -14,6 +14,30 @@ namespace AsyncWorkerCollection.Tests
         [ContractTestCase]
         public void Finish()
         {
+            "在设置 DoubleBufferTask 的 Finish 方法之后，调用 AddTask 加入任务将会抛出异常".Test(() =>
+            {
+                var mock = new Mock<IFoo>();
+                mock.Setup(foo => foo.Foo());
+                var asyncManualResetEvent = new AsyncManualResetEvent(false);
+
+                var doubleBufferTask = new DoubleBufferTask<IFoo>(async list =>
+                {
+                    await asyncManualResetEvent.WaitOneAsync();
+
+                    foreach (var foo in list)
+                    {
+                        foo.Foo();
+                    }
+                });
+
+                doubleBufferTask.Finish();
+
+                Assert.ThrowsException<InvalidOperationException>(() =>
+                {
+                    doubleBufferTask.AddTask(mock.Object);
+                });
+            });
+
             "重复多次设置 DoubleBufferTask 的 Finish 方法，不会出现任何异常".Test(() =>
             {
                 var mock = new Mock<IFoo>();
