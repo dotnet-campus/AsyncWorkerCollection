@@ -83,6 +83,14 @@ namespace dotnetCampus.Threading
         {
             lock (Locker)
             {
+                if (_isSetFinish)
+                {
+                    // 重复多次调用 Finish 方法，第二次调用将无效
+                    return;
+                }
+
+                _isSetFinish = true;
+
                 if (!_isDoing)
                 {
                     FinishTask.SetResult(true);
@@ -103,6 +111,11 @@ namespace dotnetCampus.Threading
         }
 
         private TaskCompletionSource<bool> FinishTask { get; } = new TaskCompletionSource<bool>();
+
+        /// <summary>
+        /// 是否调用了 <see cref="Finish"/> 方法，因为此方法不适合多次重复调用
+        /// </summary>
+        private bool _isSetFinish;
 
         private volatile bool _isDoing;
 
