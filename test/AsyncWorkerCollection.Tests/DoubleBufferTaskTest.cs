@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using dotnetCampus.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,6 +11,52 @@ namespace AsyncWorkerCollection.Tests
     [TestClass]
     public class DoubleBufferTaskTest
     {
+        [ContractTestCase]
+        public void Finish()
+        {
+            "重复多次设置 DoubleBufferTask 的 Finish 方法，不会出现任何异常".Test(() =>
+            {
+                var mock = new Mock<IFoo>();
+                mock.Setup(foo => foo.Foo());
+                var asyncManualResetEvent = new AsyncManualResetEvent(false);
+
+                var doubleBufferTask = new DoubleBufferTask<IFoo>(async list =>
+                {
+                    await asyncManualResetEvent.WaitOneAsync();
+
+                    foreach (var foo in list)
+                    {
+                        foo.Foo();
+                    }
+                });
+                doubleBufferTask.AddTask(mock.Object);
+
+                var taskArray = new Task[100];
+                var manualResetEventSlim = new ManualResetEventSlim(false);
+
+                const int n = 10;
+                for (int i = 0; i < taskArray.Length; i++)
+                {
+                    taskArray[i] = Task.Run(async () =>
+                    {
+                        manualResetEventSlim.Wait();
+                        for (int j = 0; j < n; j++)
+                        {
+                            await Task.Delay(TimeSpan.FromMilliseconds(50));
+                            doubleBufferTask.Finish();
+                        }
+                    });
+                }
+
+                manualResetEventSlim.Set();
+                // 没有异常
+                Task.WaitAll(taskArray);
+
+                asyncManualResetEvent.Set();
+                doubleBufferTask.WaitAllTaskFinish().Wait();
+            });
+        }
+
         [ContractTestCase]
         public void DoAll()
         {

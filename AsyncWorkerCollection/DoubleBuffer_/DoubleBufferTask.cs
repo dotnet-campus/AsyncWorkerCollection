@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 #if !NETCOREAPP
@@ -45,6 +46,13 @@ namespace dotnetCampus.Threading
         /// <param name="t"></param>
         public void AddTask(TU t)
         {
+            var isSetFinish = _isSetFinish;
+            if (isSetFinish == 1)
+            {
+                // 被设置完成了，业务上就不应该再次给任何的数据内容
+                throw new InvalidOperationException($"The DoubleBufferTask has been set finish.");
+            }
+
             DoubleBuffer.Add(t);
             DoInner();
         }
@@ -81,16 +89,16 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Finish()
         {
+            var isSetFinish = Interlocked.CompareExchange(ref _isSetFinish, 1, 0);
+            if (isSetFinish == 1)
+            {
+                // 多次设置完成任务
+                // 重复多次调用 Finish 方法，第二次调用将无效
+                return;
+            }
+
             lock (Locker)
             {
-                if (_isSetFinish)
-                {
-                    // 重复多次调用 Finish 方法，第二次调用将无效
-                    return;
-                }
-
-                _isSetFinish = true;
-
                 if (!_isDoing)
                 {
                     FinishTask.SetResult(true);
@@ -121,7 +129,8 @@ namespace dotnetCampus.Threading
         /// <summary>
         /// 是否调用了 <see cref="Finish"/> 方法，因为此方法不适合多次重复调用
         /// </summary>
-        private bool _isSetFinish;
+        /// 选用 int 的考虑是为了做原子无锁设计，提升性能
+        private int _isSetFinish;
 
         private volatile bool _isDoing;
 
