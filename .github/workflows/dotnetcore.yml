@@ -25,6 +25,10 @@ jobs:
       run: dotnet build --configuration Release -f netcoreapp3.1
     - name: Test with dotnet
       run: dotnet test --configuration Release  --no-build -f netcoreapp3.1
+    - name: Run Infer#      
+      uses: microsoft/infersharpaction@v1.2
+      with:
+        binary-path: AsyncWorkerCollection/bin/Release/netcoreapp3.1
 
   TestOnMac:
 
