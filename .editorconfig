@@ -6,8 +6,10 @@ insert_final_newline = true
 tab_width = 4
 trim_trailing_whitespace = true
 
-[*.xml]
+[*.{xml,csproj,vbproj,props,targets}]
+indent_size =2
 indent_style = space
+tab_width =2
 
 [*.{cs,vb}]
 dotnet_sort_system_directives_first = true
