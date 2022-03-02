@@ -20,4 +20,4 @@ jobs:
       - name: Test
         run: |
           cd test\AsyncWorkerCollection.Tests
-          dotnet stryker -p="AsyncWorkerCollection.csproj" --log-file  -r "['html', 'progress']"
+          dotnet stryker -p="AsyncWorkerCollection.csproj"  -r "['html', 'progress']"
