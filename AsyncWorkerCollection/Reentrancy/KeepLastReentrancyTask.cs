@@ -48,11 +48,23 @@ namespace dotnetCampus.Threading.Reentrancy
         /// </summary>
         private readonly Queue<TaskWrapper> _skipQueue = new Queue<TaskWrapper>();
 
+        private readonly bool _configureAwait;
+
         /// <summary>
         /// 创建以KeepLast策略执行的可重入任务。
         /// </summary>
         /// <param name="task">可重入任务本身。</param>
         public KeepLastReentrancyTask(Func<TParameter, Task<TReturn>> task) : base(task) { }
+
+        /// <summary>
+        /// 创建以KeepLast策略执行的可重入任务。
+        /// </summary>
+        /// <param name="task">可重入任务本身。</param>
+        /// <param name="configureAwait"></param>
+        public KeepLastReentrancyTask(Func<TParameter, Task<TReturn>> task, bool configureAwait) : this(task)
+        {
+            _configureAwait = configureAwait;
+        }
 
         /// <summary>
         /// 以KeepLast策略执行重入任务，并获取此次重入任务的返回值。
@@ -62,7 +74,7 @@ namespace dotnetCampus.Threading.Reentrancy
         /// <returns>重入任务本次执行的返回值。</returns>
         public override Task<TReturn> InvokeAsync(TParameter arg)
         {
-            var wrapper = new TaskWrapper(() => RunCore(arg));
+            var wrapper = new TaskWrapper(() => RunCore(arg), _configureAwait);
             _queue.Enqueue(wrapper);
             Run();
             return wrapper.AsTask();
@@ -106,7 +118,7 @@ namespace dotnetCampus.Threading.Reentrancy
                 if (runTask != null)
                 {
                     // 内部已包含异常处理，因此外面可以无需捕获或者清理。
-                    await runTask.RunAsync().ConfigureAwait(false);
+                    await runTask.RunAsync().ConfigureAwait(_configureAwait);
                     //完成后对等待队列中的项赋值
                     if (runTask.Exception != null)
                     {
@@ -156,14 +168,16 @@ namespace dotnetCampus.Threading.Reentrancy
             /// <summary>
             /// 创建一个任务包装。
             /// </summary>
-            internal TaskWrapper(Func<Task<TReturn>> workingTask)
+            internal TaskWrapper(Func<Task<TReturn>> workingTask, bool configureAwait)
             {
                 _taskSource = new TaskCompletionSource<TReturn>();
                 _task = workingTask;
+                _configureAwait = configureAwait;
             }
 
             private readonly TaskCompletionSource<TReturn> _taskSource;
             private readonly Func<Task<TReturn>> _task;
+            private readonly bool _configureAwait;
 
             public TReturn Result { get; set; }
             public Exception Exception { get; set; }
@@ -180,7 +194,7 @@ namespace dotnetCampus.Threading.Reentrancy
                     {
                         throw new InvalidOperationException("在指定 KeepLastReentrancyTask 的任务时，方法内不允许返回 null。请至少返回 Task.FromResult<object>(null)。");
                     }
-                    var result = await task.ConfigureAwait(false);
+                    var result = await task.ConfigureAwait(_configureAwait);
                     _taskSource.SetResult(result);
                     Result = result;
                 }
