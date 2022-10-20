@@ -13,7 +13,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class ExecuteOnceAwaiter<TResult>
+        class ExecuteOnceAwaiter<TResult>
     {
         /// <summary>
         /// 创建只执行一次的等待，调用 <see cref="ExecuteAsync"/> 时，无论调用多少次，只会执行 <paramref name="asyncAction"/> 一次
@@ -34,7 +34,7 @@ namespace dotnetCampus.Threading
         {
             lock (_locker)
             {
-                if (_executionResult != null)
+                if (_executionResult is not null)
                 {
                     return _executionResult;
                 }
@@ -53,14 +53,15 @@ namespace dotnetCampus.Threading
             {
                 if (_executionResult?.IsCompleted is true)
                 {
-                    _executionResult = null;
+                    _executionResult = default;
                 }
             }
         }
 
-        private readonly object _locker = new object();
+        private readonly object _locker = new();
 
         private readonly Func<Task<TResult>> _asyncAction;
+
         private Task<TResult> _executionResult;
     }
 }

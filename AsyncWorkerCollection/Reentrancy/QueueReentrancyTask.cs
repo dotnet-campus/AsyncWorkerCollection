@@ -21,7 +21,7 @@ namespace dotnetCampus.Threading.Reentrancy
 #else
     public
 #endif
-    sealed class QueueReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
+        sealed class QueueReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
     {
         /// <summary>
         /// 用于原子操作判断当前是否正在执行队列中的可重入任务。
@@ -34,7 +34,7 @@ namespace dotnetCampus.Threading.Reentrancy
         /// 由于原子操作仅提供高性能的并发处理而不保证准确性，因此需要一个锁来同步 <see cref="_isRunning"/> 中值为 0 时所指的不确定情况。
         /// 不能使用一个锁来同步所有情况是因为在锁中使用 async/await 是不安全的，因此避免在锁中执行异步任务；我们使用原子操作来判断异步任务的执行条件。
         /// </summary>
-        private readonly object _locker = new object();
+        private readonly object _locker = new();
 
         /// <summary>
         /// 使用一个并发队列来表示目前已加入到队列中的全部可重入任务。

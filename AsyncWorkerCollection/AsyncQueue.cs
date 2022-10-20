@@ -1,10 +1,10 @@
 ﻿#nullable enable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-
 #if !NETCOREAPP
 using ValueTask = System.Threading.Tasks.Task;
 #endif
@@ -20,7 +20,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class AsyncQueue<T> : IDisposable, IAsyncDisposable
+        class AsyncQueue<T> : IDisposable, IAsyncDisposable
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ConcurrentQueue<T> _queue;
@@ -119,7 +119,7 @@ namespace dotnetCampus.Threading
         /// <returns></returns>
         public async ValueTask WaitForCurrentFinished()
         {
-            if (_queue.Count == 0)
+            if (_queue.Count is 0)
             {
                 return;
             }
@@ -128,7 +128,7 @@ namespace dotnetCampus.Threading
 
             // 有线程执行事件触发，刚好此时在创建 CurrentFinishedTask 对象
             // 此时需要重新判断是否存在任务
-            if (_queue.Count == 0)
+            if (_queue.Count is 0)
             {
                 return;
             }
@@ -155,6 +155,7 @@ namespace dotnetCampus.Threading
                 // 释放 DequeueAsync 方法，释放次数为 DequeueAsync 在调用的次数
                 _semaphoreSlim.Release(_dequeueAsyncEnterCount);
             }
+
             _semaphoreSlim.Dispose();
         }
 
@@ -221,8 +222,7 @@ namespace dotnetCampus.Threading
                 await _currentFinishedTaskCompletionSource.Task.ConfigureAwait(false);
             }
 
-            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource =
-                new TaskCompletionSource<bool>();
+            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource = new();
 
             private readonly AsyncQueue<T> _asyncQueue;
 

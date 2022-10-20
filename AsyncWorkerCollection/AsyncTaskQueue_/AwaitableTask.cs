@@ -12,7 +12,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class AwaitableTask
+        class AwaitableTask
     {
         /// <summary>
         /// 获取任务是否为不可执行状态
@@ -30,7 +30,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void SetNotExecutable()
         {
-            Executable = false;
+            Executable = default;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void MarkTaskInvalid()
         {
-            IsValid = false;
+            IsValid = default;
         }
 
         #region Task

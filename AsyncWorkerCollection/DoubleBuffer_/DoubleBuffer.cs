@@ -15,7 +15,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class DoubleBuffer<T, TU> where T : class, ICollection<TU>
+        class DoubleBuffer<T, TU> where T : class, ICollection<TU>
     {
         /// <summary>
         /// 创建双缓存
@@ -109,6 +109,7 @@ namespace dotnetCampus.Threading
         /// 用于给其他类型的同步使用的对象
         /// </summary>
         internal object SyncObject => _lock;
+
         private readonly object _lock = new object();
 
         private T CurrentList { set; get; }

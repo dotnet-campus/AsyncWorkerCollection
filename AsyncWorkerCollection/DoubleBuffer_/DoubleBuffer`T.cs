@@ -11,7 +11,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class DoubleBuffer<T> : DoubleBuffer<List<T>, T>
+        class DoubleBuffer<T> : DoubleBuffer<List<T>, T>
     {
         /// <summary>
         /// 创建使用 <see cref="List&lt;T&gt;"/> 的双缓存

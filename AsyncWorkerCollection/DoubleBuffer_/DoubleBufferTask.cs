@@ -18,7 +18,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class DoubleBufferTask<T, TU> : IAsyncDisposable
+        class DoubleBufferTask<T, TU> : IAsyncDisposable
         where T : class, ICollection<TU>
     {
         /// <summary>
@@ -74,12 +74,14 @@ namespace dotnetCampus.Threading
 
                 lock (Locker)
                 {
-                    if (DoubleBuffer.GetIsEmpty())
+                    if (!DoubleBuffer.GetIsEmpty())
                     {
-                        _isDoing = false;
-                        Finished?.Invoke(this, EventArgs.Empty);
-                        break;
+                        continue;
                     }
+
+                    _isDoing = false;
+                    Finished?.Invoke(this, EventArgs.Empty);
+                    break;
                 }
             }
         }

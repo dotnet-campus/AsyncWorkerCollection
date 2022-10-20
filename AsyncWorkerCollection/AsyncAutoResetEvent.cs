@@ -14,7 +14,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class AsyncAutoResetEvent : IDisposable
+        class AsyncAutoResetEvent : IDisposable
     {
         /// <summary>
         /// 提供一个信号初始值，确定是否有信号
@@ -72,7 +72,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Set()
         {
-            TaskCompletionSource<bool>? releaseSource = null;
+            TaskCompletionSource<bool>? releaseSource = default;
             bool result;
             lock (_locker)
             {
@@ -125,10 +125,9 @@ namespace dotnetCampus.Threading
 
         private bool _isDisposed;
 
-        private readonly object _locker = new object();
+        private readonly object _locker = new();
 
-        private readonly Queue<TaskCompletionSource<bool>> _waitQueue =
-            new Queue<TaskCompletionSource<bool>>();
+        private readonly Queue<TaskCompletionSource<bool>> _waitQueue = new();
 
         /// <summary>
         /// 用于在没有任何等待时让下一次等待通过

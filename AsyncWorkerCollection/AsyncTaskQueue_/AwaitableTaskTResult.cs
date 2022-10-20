@@ -13,7 +13,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class AwaitableTask<TResult> : AwaitableTask
+        class AwaitableTask<TResult> : AwaitableTask
     {
         /// <summary>
         /// 初始化可等待的任务
