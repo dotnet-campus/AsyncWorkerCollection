@@ -34,7 +34,7 @@ namespace dotnetCampus.Threading
         {
             lock (_locker)
             {
-                if (_executionResult is not null)
+                if (_executionResult != null)
                 {
                     return _executionResult;
                 }
@@ -58,7 +58,7 @@ namespace dotnetCampus.Threading
             }
         }
 
-        private readonly object _locker = new();
+        private readonly object _locker = new object();
 
         private readonly Func<Task<TResult>> _asyncAction;
 

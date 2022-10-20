@@ -184,8 +184,8 @@ namespace dotnetCampus.Threading
 
         private bool TryGetNextTask(out AwaitableTask task)
         {
-            task = default;
-            while (_queue.Count is 0)
+            task = null;
+            while (_queue.Count > 0)
             {
                 //获取并从队列中移除任务
                 if (_queue.TryDequeue(out task) && (!AutoCancelPreviousTask || _queue.Count == 0))
@@ -201,7 +201,7 @@ namespace dotnetCampus.Threading
                 task.SetNotExecutable();
             }
 
-            return default;
+            return false;
         }
 
         #endregion
@@ -275,7 +275,7 @@ namespace dotnetCampus.Threading
         private object Locker => _queue;
         private bool _isDisposed;
         private bool _isDisposing;
-        private readonly ConcurrentQueue<AwaitableTask> _queue = new();
+        private readonly ConcurrentQueue<AwaitableTask> _queue = new ConcurrentQueue<AwaitableTask>();
         private readonly AsyncAutoResetEvent _autoResetEvent;
 
         // ReSharper disable once RedundantDefaultMemberInitializer

@@ -125,9 +125,9 @@ namespace dotnetCampus.Threading
 
         private bool _isDisposed;
 
-        private readonly object _locker = new();
+        private readonly object _locker = new object();
 
-        private readonly Queue<TaskCompletionSource<bool>> _waitQueue = new();
+        private readonly Queue<TaskCompletionSource<bool>> _waitQueue = new Queue<TaskCompletionSource<bool>>();
 
         /// <summary>
         /// 用于在没有任何等待时让下一次等待通过

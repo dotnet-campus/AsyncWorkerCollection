@@ -30,7 +30,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void SetNotExecutable()
         {
-            Executable = default;
+            Executable = false;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void MarkTaskInvalid()
         {
-            IsValid = default;
+            IsValid = false;
         }
 
         #region Task

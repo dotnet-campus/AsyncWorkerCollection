@@ -50,7 +50,7 @@ namespace dotnetCampus.Threading
             if (isSetFinish == 1)
             {
                 // 被设置完成了，业务上就不应该再次给任何的数据内容
-                throw new InvalidOperationException($"The DoubleBufferTask has been set finish.");
+                throw new InvalidOperationException("The DoubleBufferTask has been set finish.");
             }
 
             DoubleBuffer.Add(t);

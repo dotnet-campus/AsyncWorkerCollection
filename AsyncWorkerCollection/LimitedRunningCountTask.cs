@@ -133,7 +133,7 @@ namespace dotnetCampus.Threading
             }
         }
 
-        private List<Task> Buffer { get; } = new();
+        private List<Task> Buffer { get; } = new List<Task>();
 
         private object Locker => Buffer;
 

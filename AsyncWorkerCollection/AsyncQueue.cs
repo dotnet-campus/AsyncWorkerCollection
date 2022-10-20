@@ -222,7 +222,8 @@ namespace dotnetCampus.Threading
                 await _currentFinishedTaskCompletionSource.Task.ConfigureAwait(false);
             }
 
-            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource = new();
+            private readonly TaskCompletionSource<bool> _currentFinishedTaskCompletionSource =
+                new TaskCompletionSource<bool>();
 
             private readonly AsyncQueue<T> _asyncQueue;
 

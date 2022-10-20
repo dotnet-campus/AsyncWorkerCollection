@@ -50,16 +50,8 @@ namespace dotnetCampus.Threading
         {
             lock (_lock)
             {
-                if (ReferenceEquals(CurrentList, AList))
-                {
-                    CurrentList = BList;
-                    return AList;
-                }
-                else
-                {
-                    CurrentList = AList;
-                    return BList;
-                }
+                CurrentList = ReferenceEquals(CurrentList, AList) ? AList : BList;
+                return ReferenceEquals(CurrentList, AList) ? BList : AList;
             }
         }
 
