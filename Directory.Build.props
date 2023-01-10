@@ -7,7 +7,7 @@
     <LangVersion>latest</LangVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>一个支持异步方法和支持高性能多线程的工具集合。A collection of tools that support asynchronous methods and support high-performance multithreading.</Description>
-    <Copyright>Copyright (c) 2020 dotnet-campus</Copyright>
+    <Copyright>Copyright (c) 2020-2023 dotnet-campus</Copyright>
     <PackageProjectUrl>https://github.com/dotnet-campus/AsyncWorkerCollection</PackageProjectUrl>
     <RepositoryUrl>https://github.com/dotnet-campus/AsyncWorkerCollection.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
