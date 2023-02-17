@@ -109,7 +109,7 @@ namespace dotnetCampus.Threading
             }
         }
 
-        private void OnFinished(object sender, EventArgs args)
+        private void OnFinished(object? sender, EventArgs args)
         {
             Finished -= OnFinished;
             FinishTask.SetResult(true);

@@ -211,7 +211,7 @@ namespace dotnetCampus.Threading
                 }
             }
 
-            private void CurrentFinished(object sender, EventArgs e)
+            private void CurrentFinished(object? sender, EventArgs e)
             {
                 _currentFinishedTaskCompletionSource.TrySetResult(true);
             }
