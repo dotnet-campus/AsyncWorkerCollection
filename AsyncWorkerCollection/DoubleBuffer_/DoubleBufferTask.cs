@@ -54,10 +54,10 @@ namespace dotnetCampus.Threading
             }
 
             DoubleBuffer.Add(t);
-            DoInner();
+            _ = DoInner();
         }
 
-        private async void DoInner()
+        private async Task DoInner()
         {
             // ReSharper disable once InconsistentlySynchronizedField
             if (_isDoing) return;
