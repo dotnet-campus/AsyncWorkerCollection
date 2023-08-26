@@ -12,7 +12,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class AwaitableTask
+        class AwaitableTask
     {
         /// <summary>
         /// 获取任务是否为不可执行状态

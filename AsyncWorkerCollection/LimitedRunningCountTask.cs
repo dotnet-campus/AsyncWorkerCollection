@@ -87,9 +87,9 @@ namespace dotnetCampus.Threading
         /// 等待空闲
         /// </summary>
         /// <returns></returns>
-        public async ValueTask WaitForFree()
+        private async ValueTask WaitForFree()
         {
-            if (WaitForFreeTask == null)
+            if (WaitForFreeTask is null)
             {
                 return;
             }
@@ -148,18 +148,11 @@ namespace dotnetCampus.Threading
         private async Task RunningInner()
         {
             // ReSharper disable once InconsistentlySynchronizedField
-            if (_isRunning)
-            {
-                return;
-            }
+            if (_isRunning) return;
 
             lock (Locker)
             {
-                if (_isRunning)
-                {
-                    return;
-                }
-
+                if (_isRunning) return;
                 _isRunning = true;
             }
 
@@ -217,16 +210,11 @@ namespace dotnetCampus.Threading
 
             void SetWaitForFreeTask()
             {
-                if (runningTaskList.Count > MaxRunningCount)
-                {
-                    if (WaitForFreeTask?.Task.IsCompleted is false)
-                    {
-                    }
-                    else
-                    {
-                        WaitForFreeTask = new TaskCompletionSource<bool>();
-                    }
-                }
+                if (runningTaskList.Count <= MaxRunningCount) return;
+
+                if (WaitForFreeTask?.Task.IsCompleted is false) return;
+
+                WaitForFreeTask = new TaskCompletionSource<bool>();
             }
         }
     }

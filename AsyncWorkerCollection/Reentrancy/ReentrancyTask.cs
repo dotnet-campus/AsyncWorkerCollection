@@ -19,12 +19,12 @@ namespace dotnetCampus.Threading.Reentrancy
 #else
     public
 #endif
-    abstract class ReentrancyTask<TParameter, TReturn>
+        abstract class ReentrancyTask<TParameter, TReturn>
     {
         /// <summary>
         /// 在派生类中执行重入任务的时候，从此处获取需要执行的可重入异步任务。
         /// </summary>
-        protected Func<TParameter, Task<TReturn>> WorkingTask { get; }
+        private Func<TParameter, Task<TReturn>> WorkingTask { get; }
 
         /// <summary>
         /// 初始化可重入任务的公共基类。

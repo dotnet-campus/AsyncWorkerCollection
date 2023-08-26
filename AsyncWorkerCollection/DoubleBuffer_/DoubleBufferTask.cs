@@ -18,7 +18,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class DoubleBufferTask<T, TU> : IAsyncDisposable
+        class DoubleBufferTask<T, TU> : IAsyncDisposable
         where T : class, ICollection<TU>
     {
         /// <summary>
@@ -50,7 +50,7 @@ namespace dotnetCampus.Threading
             if (isSetFinish == 1)
             {
                 // 被设置完成了，业务上就不应该再次给任何的数据内容
-                throw new InvalidOperationException($"The DoubleBufferTask has been set finish.");
+                throw new InvalidOperationException("The DoubleBufferTask has been set finish.");
             }
 
             DoubleBuffer.Add(t);
@@ -74,12 +74,14 @@ namespace dotnetCampus.Threading
 
                 lock (Locker)
                 {
-                    if (DoubleBuffer.GetIsEmpty())
+                    if (!DoubleBuffer.GetIsEmpty())
                     {
-                        _isDoing = false;
-                        Finished?.Invoke(this, EventArgs.Empty);
-                        break;
+                        continue;
                     }
+
+                    _isDoing = false;
+                    Finished?.Invoke(this, EventArgs.Empty);
+                    break;
                 }
             }
         }
