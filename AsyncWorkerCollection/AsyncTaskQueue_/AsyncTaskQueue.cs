@@ -21,7 +21,7 @@ namespace dotnetCampus.Threading
         public AsyncTaskQueue()
         {
             _autoResetEvent = new AsyncAutoResetEvent(false);
-            InternalRunning();
+            _ = InternalRunning();
         }
 
         #region 执行
@@ -113,7 +113,7 @@ namespace dotnetCampus.Threading
 
         #region 内部运行
 
-        private async void InternalRunning()
+        private async Task InternalRunning()
         {
             while (!_isDisposing)
             {

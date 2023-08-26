@@ -54,10 +54,10 @@ namespace dotnetCampus.Threading
             }
 
             DoubleBuffer.Add(t);
-            DoInner();
+            _ = DoInner();
         }
 
-        private async void DoInner()
+        private async Task DoInner()
         {
             // ReSharper disable once InconsistentlySynchronizedField
             if (_isDoing) return;
@@ -111,7 +111,7 @@ namespace dotnetCampus.Threading
             }
         }
 
-        private void OnFinished(object sender, EventArgs args)
+        private void OnFinished(object? sender, EventArgs args)
         {
             Finished -= OnFinished;
             FinishTask.SetResult(true);

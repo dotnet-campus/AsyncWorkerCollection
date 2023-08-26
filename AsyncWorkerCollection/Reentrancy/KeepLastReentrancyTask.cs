@@ -76,14 +76,14 @@ namespace dotnetCampus.Threading.Reentrancy
         {
             var wrapper = new TaskWrapper(() => RunCore(arg), _configureAwait);
             _queue.Enqueue(wrapper);
-            Run();
+            _ = Run();
             return wrapper.AsTask();
         }
 
         /// <summary>
         /// 以KeepLast策略执行重入任务。此方法确保线程安全。
         /// </summary>
-        private async void Run()
+        private async Task Run()
         {
             var isRunning = Interlocked.CompareExchange(ref _isRunning, 1, 0);
             if (isRunning is 1)

@@ -68,7 +68,7 @@ namespace dotnetCampus.Threading
                 RunningBreakTask?.TrySetResult(true);
             }
 
-            RunningInner();
+            _ = RunningInner();
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace dotnetCampus.Threading
 
         private TaskCompletionSource<bool>? _waitForFreeTask;
 
-        private async void RunningInner()
+        private async Task RunningInner()
         {
             // ReSharper disable once InconsistentlySynchronizedField
             if (_isRunning) return;
