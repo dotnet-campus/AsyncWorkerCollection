@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace dotnetCampus.Threading
 {
@@ -33,10 +34,7 @@ namespace dotnetCampus.Threading
         /// <returns></returns>
         public Task WaitOneAsync()
         {
-            lock (_locker)
-            {
-                return _source.Task;
-            }
+            return _source.Task;
         }
 
         /// <summary>
@@ -44,10 +42,7 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Set()
         {
-            lock (_locker)
-            {
-                _source.SetResult(true);
-            }
+            _source.TrySetResult(true);
         }
 
         /// <summary>
@@ -55,19 +50,22 @@ namespace dotnetCampus.Threading
         /// </summary>
         public void Reset()
         {
-            lock (_locker)
+            while (true)
             {
-                if (!_source.Task.IsCompleted)
+                var tcs = _source;
+                if (!tcs.Task.IsCompleted)
                 {
                     return;
                 }
 
-                _source = new TaskCompletionSource<bool>();
+                var newTcs = new TaskCompletionSource<bool>();
+                if (Interlocked.CompareExchange(ref _source, newTcs, tcs) == tcs)
+                {
+                    return;
+                }
             }
         }
 
-        private readonly object _locker = new object();
-
-        private TaskCompletionSource<bool> _source;
+        private volatile TaskCompletionSource<bool> _source;
     }
 }
