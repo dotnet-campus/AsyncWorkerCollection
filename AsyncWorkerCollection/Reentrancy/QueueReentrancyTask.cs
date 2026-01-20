@@ -21,7 +21,7 @@ namespace dotnetCampus.Threading.Reentrancy
 #else
     public
 #endif
-    sealed class QueueReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
+        sealed class QueueReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
     {
         /// <summary>
         /// 用于原子操作判断当前是否正在执行队列中的可重入任务。

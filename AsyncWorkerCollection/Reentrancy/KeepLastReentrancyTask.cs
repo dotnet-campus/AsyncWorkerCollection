@@ -22,7 +22,7 @@ namespace dotnetCampus.Threading.Reentrancy
 #else
     public
 #endif
-    sealed class KeepLastReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
+        sealed class KeepLastReentrancyTask<TParameter, TReturn> : ReentrancyTask<TParameter, TReturn>
     {
         /// <summary>
         /// 用于原子操作判断当前是否正在执行队列中的可重入任务。
@@ -192,8 +192,10 @@ namespace dotnetCampus.Threading.Reentrancy
                     var task = _task();
                     if (task is null)
                     {
-                        throw new InvalidOperationException("在指定 KeepLastReentrancyTask 的任务时，方法内不允许返回 null。请至少返回 Task.FromResult<object>(null)。");
+                        throw new InvalidOperationException(
+                            "在指定 KeepLastReentrancyTask 的任务时，方法内不允许返回 null。请至少返回 Task.FromResult<object>(null)。");
                     }
+
                     var result = await task.ConfigureAwait(_configureAwait);
                     _taskSource.SetResult(result);
                     Result = result;

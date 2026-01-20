@@ -12,7 +12,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class AsyncManualResetEvent
+        class AsyncManualResetEvent
     {
         /// <summary>
         /// 提供一个信号初始值，确定是否有信号

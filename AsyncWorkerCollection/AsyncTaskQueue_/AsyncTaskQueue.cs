@@ -13,7 +13,7 @@ namespace dotnetCampus.Threading
 #else
     public
 #endif
-    class AsyncTaskQueue : IDisposable
+        class AsyncTaskQueue : IDisposable
     {
         /// <summary>
         /// 异步任务队列
@@ -160,16 +160,18 @@ namespace dotnetCampus.Threading
                     //如已从队列中删除
                     if (!task.Executable) continue;
                     //添加是否已释放的判断
-                    if (!_isDisposing)
+                    if (_isDisposing)
                     {
-                        if (UseSingleThread)
-                        {
-                            task.RunSynchronously();
-                        }
-                        else
-                        {
-                            task.Start();
-                        }
+                        continue;
+                    }
+
+                    if (UseSingleThread)
+                    {
+                        task.RunSynchronously();
+                    }
+                    else
+                    {
+                        task.Start();
                     }
                 }
             }
@@ -228,7 +230,9 @@ namespace dotnetCampus.Threading
             lock (Locker)
             {
                 if (_isDisposed) return;
+
                 _isDisposing = true;
+
                 if (disposing)
                 {
                 }
@@ -273,6 +277,7 @@ namespace dotnetCampus.Threading
         private bool _isDisposing;
         private readonly ConcurrentQueue<AwaitableTask> _queue = new ConcurrentQueue<AwaitableTask>();
         private readonly AsyncAutoResetEvent _autoResetEvent;
+
         // ReSharper disable once RedundantDefaultMemberInitializer
         private bool _autoCancelPreviousTask = false;
 

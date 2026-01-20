@@ -6,6 +6,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>dotnetCampus.AsyncWorkerCollection</AssemblyName>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'!='net45' AND '$(TargetFramework)'!='netstandard2.0'">
